@@ -150,8 +150,10 @@ This project showcases expertise in:
 
 ---
 ## 👨‍🏫 Project Guides 
+
 **BALAKRUSHNA BEHERA** - Java Backend Developer | MCA | 3+ years of industry experience
 [LinkedIn](https://www.linkedin.com/in/balakrushna-behera-5687001a2/)
+
 ---
 
 ## 📜 License
