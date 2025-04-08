@@ -150,7 +150,7 @@ This project showcases expertise in:
 [LinkedIn](https://www.linkedin.com/in/mrajkishor331/) • [Email](mailto:mrajkishor331@gmail.com)
 
 ---
-## 👨‍🏫 Project Guides 
+## 👨‍🏫 Project Guide
 
 **BALAKRUSHNA BEHERA** - Java Backend Developer | MCA | 3+ years of industry experience
 
