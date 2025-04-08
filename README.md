@@ -146,12 +146,14 @@ This project showcases expertise in:
 ## 🙋‍♂️ Author
 
 **Raj Kishor Maharana** – Full stack developer | Exploring Distributed Systems  
+
 [LinkedIn](https://www.linkedin.com/in/mrajkishor331/) • [Email](mailto:mrajkishor331@gmail.com)
 
 ---
 ## 👨‍🏫 Project Guides 
 
 **BALAKRUSHNA BEHERA** - Java Backend Developer | MCA | 3+ years of industry experience
+
 [LinkedIn](https://www.linkedin.com/in/balakrushna-behera-5687001a2/)
 
 ---
