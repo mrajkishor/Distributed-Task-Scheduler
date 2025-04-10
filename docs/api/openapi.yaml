@@ -4,9 +4,18 @@ info:
   version: 1.0.0
   description: API for managing jobs and their execution in a distributed task scheduler
 
+tags:
+  - name: Jobs
+    description: Job management APIs
+  - name: Tasks
+    description: Task and DAG management
+  - name: Execution
+    description: Execution and monitoring
+
 paths:
   /jobs:
     post:
+      tags: [Jobs]
       summary: Create a new job
       requestBody:
         required: true
@@ -17,7 +26,12 @@ paths:
       responses:
         '201':
           description: Job created successfully
+        '400':
+          description: Bad request
+        '500':
+          description: Internal server error
     get:
+      tags: [Jobs]
       summary: Get all jobs
       responses:
         '200':
@@ -31,13 +45,14 @@ paths:
 
   /jobs/{id}:
     get:
+      tags: [Jobs]
       summary: Get job by ID
       parameters:
         - in: path
           name: id
+          required: true
           schema:
             type: string
-          required: true
       responses:
         '200':
           description: Job details
@@ -45,14 +60,17 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Job'
+        '404':
+          description: Job not found
     put:
+      tags: [Jobs]
       summary: Update a job by ID
       parameters:
         - in: path
           name: id
+          required: true
           schema:
             type: string
-          required: true
       requestBody:
         required: true
         content:
@@ -63,27 +81,28 @@ paths:
         '200':
           description: Job updated successfully
     delete:
+      tags: [Jobs]
       summary: Delete a job by ID
       parameters:
         - in: path
           name: id
+          required: true
           schema:
             type: string
-          required: true
       responses:
         '200':
           description: Job deleted successfully
 
   /jobs/{id}/tasks:
     post:
+      tags: [Tasks]
       summary: Add a new task to a job
       parameters:
         - in: path
           name: id
+          required: true
           schema:
             type: string
-          required: true
-          description: ID of the job to which the task belongs
       requestBody:
         required: true
         content:
@@ -94,14 +113,14 @@ paths:
         '201':
           description: Task added successfully
     get:
+      tags: [Tasks]
       summary: Get all tasks in a job
       parameters:
         - in: path
           name: id
+          required: true
           schema:
             type: string
-          required: true
-          description: ID of the job
       responses:
         '200':
           description: A list of tasks in the job
@@ -114,18 +133,19 @@ paths:
 
   /jobs/{id}/tasks/{taskId}:
     put:
+      tags: [Tasks]
       summary: Update a task in a job
       parameters:
         - in: path
           name: id
+          required: true
           schema:
             type: string
-          required: true
         - in: path
           name: taskId
+          required: true
           schema:
             type: string
-          required: true
       requestBody:
         required: true
         content:
@@ -135,26 +155,27 @@ paths:
       responses:
         '200':
           description: Task updated successfully
-
     delete:
+      tags: [Tasks]
       summary: Delete a task from a job
       parameters:
         - in: path
           name: id
+          required: true
           schema:
             type: string
-          required: true
         - in: path
           name: taskId
+          required: true
           schema:
             type: string
-          required: true
       responses:
         '200':
           description: Task deleted successfully
 
   /jobs/{id}/trigger:
     post:
+      tags: [Execution]
       summary: Trigger execution of a job manually
       parameters:
         - in: path
@@ -162,7 +183,6 @@ paths:
           required: true
           schema:
             type: string
-          description: The ID of the job to trigger
       responses:
         '200':
           description: Job execution triggered
@@ -178,6 +198,7 @@ paths:
 
   /jobs/{id}/status:
     get:
+      tags: [Execution]
       summary: Get the latest status of a job
       parameters:
         - in: path
@@ -185,7 +206,6 @@ paths:
           required: true
           schema:
             type: string
-          description: The ID of the job
       responses:
         '200':
           description: Latest execution status of the job
@@ -196,6 +216,7 @@ paths:
 
   /jobs/{id}/history:
     get:
+      tags: [Execution]
       summary: Get execution history of a job
       parameters:
         - in: path
@@ -203,7 +224,6 @@ paths:
           required: true
           schema:
             type: string
-          description: The ID of the job
       responses:
         '200':
           description: List of job execution records
@@ -214,11 +234,11 @@ paths:
                 items:
                   $ref: '#/components/schemas/ExecutionRecord'
 
-
 components:
   schemas:
     Job:
       type: object
+      required: [name, tasks]
       properties:
         name:
           type: string
@@ -233,6 +253,7 @@ components:
 
     JobSummary:
       type: object
+      required: [jobId, name, status]
       properties:
         jobId:
           type: string
@@ -253,6 +274,7 @@ components:
 
     Task:
       type: object
+      required: [id, name]
       properties:
         id:
           type: string
