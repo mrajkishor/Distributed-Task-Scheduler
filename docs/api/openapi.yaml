@@ -1,0 +1,322 @@
+openapi: 3.0.3
+info:
+  title: Distributed Task Scheduler API
+  version: 1.0.0
+  description: API for managing jobs and their execution in a distributed task scheduler
+
+paths:
+  /jobs:
+    post:
+      summary: Create a new job
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Job'
+      responses:
+        '201':
+          description: Job created successfully
+    get:
+      summary: Get all jobs
+      responses:
+        '200':
+          description: A list of jobs
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/JobSummary'
+
+  /jobs/{id}:
+    get:
+      summary: Get job by ID
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+          required: true
+      responses:
+        '200':
+          description: Job details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Job'
+    put:
+      summary: Update a job by ID
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+          required: true
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/JobUpdate'
+      responses:
+        '200':
+          description: Job updated successfully
+    delete:
+      summary: Delete a job by ID
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+          required: true
+      responses:
+        '200':
+          description: Job deleted successfully
+
+  /jobs/{id}/tasks:
+    post:
+      summary: Add a new task to a job
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+          required: true
+          description: ID of the job to which the task belongs
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TaskRequest'
+      responses:
+        '201':
+          description: Task added successfully
+    get:
+      summary: Get all tasks in a job
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+          required: true
+          description: ID of the job
+      responses:
+        '200':
+          description: A list of tasks in the job
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Task'
+
+  /jobs/{id}/tasks/{taskId}:
+    put:
+      summary: Update a task in a job
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+          required: true
+        - in: path
+          name: taskId
+          schema:
+            type: string
+          required: true
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TaskUpdate'
+      responses:
+        '200':
+          description: Task updated successfully
+
+    delete:
+      summary: Delete a task from a job
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+          required: true
+        - in: path
+          name: taskId
+          schema:
+            type: string
+          required: true
+      responses:
+        '200':
+          description: Task deleted successfully
+
+  /jobs/{id}/trigger:
+    post:
+      summary: Trigger execution of a job manually
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+          description: The ID of the job to trigger
+      responses:
+        '200':
+          description: Job execution triggered
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  executionId:
+                    type: string
+
+  /jobs/{id}/status:
+    get:
+      summary: Get the latest status of a job
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+          description: The ID of the job
+      responses:
+        '200':
+          description: Latest execution status of the job
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExecutionStatus'
+
+  /jobs/{id}/history:
+    get:
+      summary: Get execution history of a job
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+          description: The ID of the job
+      responses:
+        '200':
+          description: List of job execution records
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ExecutionRecord'
+
+
+components:
+  schemas:
+    Job:
+      type: object
+      properties:
+        name:
+          type: string
+        tasks:
+          type: array
+          items:
+            $ref: '#/components/schemas/Task'
+        retryPolicy:
+          type: string
+        schedule:
+          type: string
+
+    JobSummary:
+      type: object
+      properties:
+        jobId:
+          type: string
+        name:
+          type: string
+        status:
+          type: string
+
+    JobUpdate:
+      type: object
+      properties:
+        name:
+          type: string
+        retryPolicy:
+          type: string
+        schedule:
+          type: string
+
+    Task:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        dependencies:
+          type: array
+          items:
+            type: string
+
+    TaskRequest:
+      type: object
+      required: [id, name]
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        dependencies:
+          type: array
+          items:
+            type: string
+        metadata:
+          type: object
+          additionalProperties: true
+
+    TaskUpdate:
+      type: object
+      properties:
+        name:
+          type: string
+        dependencies:
+          type: array
+          items:
+            type: string
+        metadata:
+          type: object
+          additionalProperties: true
+
+    ExecutionStatus:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [PENDING, RUNNING, COMPLETED, FAILED]
+        updatedAt:
+          type: string
+          format: date-time
+        message:
+          type: string
+
+    ExecutionRecord:
+      type: object
+      properties:
+        executionId:
+          type: string
+        status:
+          type: string
+          enum: [PENDING, RUNNING, COMPLETED, FAILED]
+        startedAt:
+          type: string
+          format: date-time
+        finishedAt:
+          type: string
+          format: date-time
+        logs:
+          type: string
