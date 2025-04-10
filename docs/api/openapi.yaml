@@ -74,6 +74,85 @@ paths:
         '200':
           description: Job deleted successfully
 
+  /jobs/{id}/tasks:
+    post:
+      summary: Add a new task to a job
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+          required: true
+          description: ID of the job to which the task belongs
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TaskRequest'
+      responses:
+        '201':
+          description: Task added successfully
+    get:
+      summary: Get all tasks in a job
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+          required: true
+          description: ID of the job
+      responses:
+        '200':
+          description: A list of tasks in the job
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Task'
+
+  /jobs/{id}/tasks/{taskId}:
+    put:
+      summary: Update a task in a job
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+          required: true
+        - in: path
+          name: taskId
+          schema:
+            type: string
+          required: true
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TaskUpdate'
+      responses:
+        '200':
+          description: Task updated successfully
+
+    delete:
+      summary: Delete a task from a job
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+          required: true
+        - in: path
+          name: taskId
+          schema:
+            type: string
+          required: true
+      responses:
+        '200':
+          description: Task deleted successfully
+
 components:
   schemas:
     Job:
@@ -121,3 +200,32 @@ components:
           type: array
           items:
             type: string
+
+    TaskRequest:
+      type: object
+      required: [id, name]
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        dependencies:
+          type: array
+          items:
+            type: string
+        metadata:
+          type: object
+          additionalProperties: true
+
+    TaskUpdate:
+      type: object
+      properties:
+        name:
+          type: string
+        dependencies:
+          type: array
+          items:
+            type: string
+        metadata:
+          type: object
+          additionalProperties: true
