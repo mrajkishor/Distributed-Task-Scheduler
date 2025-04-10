@@ -153,6 +153,68 @@ paths:
         '200':
           description: Task deleted successfully
 
+  /jobs/{id}/trigger:
+    post:
+      summary: Trigger execution of a job manually
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+          description: The ID of the job to trigger
+      responses:
+        '200':
+          description: Job execution triggered
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  executionId:
+                    type: string
+
+  /jobs/{id}/status:
+    get:
+      summary: Get the latest status of a job
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+          description: The ID of the job
+      responses:
+        '200':
+          description: Latest execution status of the job
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExecutionStatus'
+
+  /jobs/{id}/history:
+    get:
+      summary: Get execution history of a job
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+          description: The ID of the job
+      responses:
+        '200':
+          description: List of job execution records
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ExecutionRecord'
+
+
 components:
   schemas:
     Job:
@@ -229,3 +291,32 @@ components:
         metadata:
           type: object
           additionalProperties: true
+
+    ExecutionStatus:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [PENDING, RUNNING, COMPLETED, FAILED]
+        updatedAt:
+          type: string
+          format: date-time
+        message:
+          type: string
+
+    ExecutionRecord:
+      type: object
+      properties:
+        executionId:
+          type: string
+        status:
+          type: string
+          enum: [PENDING, RUNNING, COMPLETED, FAILED]
+        startedAt:
+          type: string
+          format: date-time
+        finishedAt:
+          type: string
+          format: date-time
+        logs:
+          type: string
