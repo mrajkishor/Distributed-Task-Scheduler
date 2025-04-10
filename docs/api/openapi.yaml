@@ -1,0 +1,123 @@
+openapi: 3.0.3
+info:
+  title: Distributed Task Scheduler API
+  version: 1.0.0
+  description: API for managing jobs and their execution in a distributed task scheduler
+
+paths:
+  /jobs:
+    post:
+      summary: Create a new job
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Job'
+      responses:
+        '201':
+          description: Job created successfully
+    get:
+      summary: Get all jobs
+      responses:
+        '200':
+          description: A list of jobs
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/JobSummary'
+
+  /jobs/{id}:
+    get:
+      summary: Get job by ID
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+          required: true
+      responses:
+        '200':
+          description: Job details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Job'
+    put:
+      summary: Update a job by ID
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+          required: true
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/JobUpdate'
+      responses:
+        '200':
+          description: Job updated successfully
+    delete:
+      summary: Delete a job by ID
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+          required: true
+      responses:
+        '200':
+          description: Job deleted successfully
+
+components:
+  schemas:
+    Job:
+      type: object
+      properties:
+        name:
+          type: string
+        tasks:
+          type: array
+          items:
+            $ref: '#/components/schemas/Task'
+        retryPolicy:
+          type: string
+        schedule:
+          type: string
+
+    JobSummary:
+      type: object
+      properties:
+        jobId:
+          type: string
+        name:
+          type: string
+        status:
+          type: string
+
+    JobUpdate:
+      type: object
+      properties:
+        name:
+          type: string
+        retryPolicy:
+          type: string
+        schedule:
+          type: string
+
+    Task:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        dependencies:
+          type: array
+          items:
+            type: string
