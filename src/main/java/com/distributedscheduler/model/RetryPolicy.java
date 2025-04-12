@@ -1,4 +1,4 @@
-package main.java.com.distributedscheduler.model;
+package com.distributedscheduler.model;
 
 /**
  * Represents the retry policy for a job in case of task failure.
@@ -19,7 +19,8 @@ public class RetryPolicy {
     /**
      * Default constructor.
      */
-    public RetryPolicy() {}
+    public RetryPolicy() {
+    }
 
     /**
      * Constructs a RetryPolicy with the specified max retries and delay.

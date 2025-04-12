@@ -1,4 +1,4 @@
-package main.java.com.distributedscheduler.model;
+package com.distributedscheduler.model;
 
 /**
  * Enum representing the current lifecycle status of a Job in the Distributed Task Scheduler.

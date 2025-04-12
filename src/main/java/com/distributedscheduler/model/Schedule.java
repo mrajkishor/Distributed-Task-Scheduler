@@ -1,4 +1,4 @@
-package main.java.com.distributedscheduler.model;
+package com.distributedscheduler.model;
 
 /**
  * Represents the scheduling configuration for a job.
@@ -19,7 +19,8 @@ public class Schedule {
     /**
      * Default constructor.
      */
-    public Schedule() {}
+    public Schedule() {
+    }
 
     /**
      * Constructs a Schedule with a given cron expression and recurrence flag.

@@ -1,10 +1,11 @@
-package main.java.com.distributedscheduler.model;
+package com.distributedscheduler.model;
 
 import java.util.List;
 
 /**
  * Represents an individual task within a Job's Directed Acyclic Graph (DAG).
- * Each task can have dependencies on other tasks and contains its execution status and logs.
+ * Each task can have dependencies on other tasks and contains its execution
+ * status and logs.
  */
 public class Task {
 
@@ -36,7 +37,8 @@ public class Task {
     /**
      * Default constructor.
      */
-    public Task() {}
+    public Task() {
+    }
 
     /**
      * Constructs a fully-initialized Task.
@@ -56,32 +58,52 @@ public class Task {
     }
 
     /** @return Unique task ID */
-    public String getId() { return id; }
+    public String getId() {
+        return id;
+    }
 
     /** @param id Unique task ID */
-    public void setId(String id) { this.id = id; }
+    public void setId(String id) {
+        this.id = id;
+    }
 
     /** @return Task name */
-    public String getName() { return name; }
+    public String getName() {
+        return name;
+    }
 
     /** @param name Task name */
-    public void setName(String name) { this.name = name; }
+    public void setName(String name) {
+        this.name = name;
+    }
 
     /** @return List of task IDs this task depends on */
-    public List<String> getDependencies() { return dependencies; }
+    public List<String> getDependencies() {
+        return dependencies;
+    }
 
     /** @param dependencies List of dependent task IDs */
-    public void setDependencies(List<String> dependencies) { this.dependencies = dependencies; }
+    public void setDependencies(List<String> dependencies) {
+        this.dependencies = dependencies;
+    }
 
     /** @return Current task status */
-    public TaskStatus getStatus() { return status; }
+    public TaskStatus getStatus() {
+        return status;
+    }
 
     /** @param status Status of the task */
-    public void setStatus(TaskStatus status) { this.status = status; }
+    public void setStatus(TaskStatus status) {
+        this.status = status;
+    }
 
     /** @return Execution log for this task */
-    public String getLog() { return log; }
+    public String getLog() {
+        return log;
+    }
 
     /** @param log Task execution log */
-    public void setLog(String log) { this.log = log; }
+    public void setLog(String log) {
+        this.log = log;
+    }
 }

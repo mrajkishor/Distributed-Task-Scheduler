@@ -1,0 +1,57 @@
+# === Java-related ===
+*.class
+*.jar
+*.war
+*.ear
+*.iml
+*.log
+
+# === Gradle ===
+.gradle/
+build/
+!gradle/wrapper/gradle-wrapper.jar
+
+# === IDEs ===
+.idea/
+*.iws
+*.ipr
+*.iml
+.vscode/
+*.sw?
+
+# === OS ===
+.DS_Store
+Thumbs.db
+
+# === JaCoCo ===
+*.exec
+jacoco.exec
+
+# === Logs ===
+*.log
+
+# === Tests and Reports ===
+test-output/
+build/reports/
+coverage/
+out/
+
+# === Temporary ===
+*.tmp
+*.bak
+*.swp
+*~
+
+# === Environment ===
+.env
+.env.*
+
+# === IntelliJ Run Configs ===
+.idea/runConfigurations/
+
+# === Node (optional for frontend/mfe) ===
+node_modules/
+dist/
+
+# === Final Year Submission Tip ===
+# If submitting a zipped copy to faculty, make sure to remove this file or comment appropriately.
