@@ -1,0 +1,38 @@
+plugins {
+    id 'java'
+    id 'jacoco'
+}
+
+group 'com.distributedscheduler'
+version '1.0.0'
+
+sourceCompatibility = '17'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    // JUnit 5 for testing
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.9.3'
+}
+
+test {
+    useJUnitPlatform()
+    finalizedBy jacocoTestReport // runs the report after tests
+}
+
+jacoco {
+    toolVersion = "0.8.10" // Or latest
+}
+
+jacocoTestReport {
+    dependsOn test
+
+    reports {
+        html.required.set(true)
+        xml.required.set(true)
+        csv.required.set(true)
+    }
+}
+
