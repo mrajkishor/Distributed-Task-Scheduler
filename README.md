@@ -156,6 +156,11 @@ This project showcases expertise in:
 
 [LinkedIn](https://www.linkedin.com/in/balakrushna-behera-5687001a2/)
 
+
+**Abhishek Prasad** - Software Engineer | NIT Durgapur
+
+[LinkedIn]([https://www.linkedin.com/in/balakrushna-behera-5687001a2/](https://www.linkedin.com/in/compro-prasad/))
+
 ---
 
 ## 📜 License
