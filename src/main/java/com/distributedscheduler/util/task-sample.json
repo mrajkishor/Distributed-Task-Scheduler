@@ -1,0 +1,12 @@
+{
+  "id": "email-task-123",
+  "name": "Send Welcome Email",
+  "dependencies": ["fetch-user-data"],
+  "status": "PENDING",
+  "retryCount": 0,
+  "maxRetries": 3,
+  "log": "Task created",
+  "executionLogs": [
+    "Created at 2024-04-16T10:00:00Z"
+  ]
+}

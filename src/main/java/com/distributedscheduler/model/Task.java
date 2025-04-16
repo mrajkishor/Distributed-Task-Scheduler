@@ -1,5 +1,6 @@
 package com.distributedscheduler.model;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -39,6 +40,13 @@ public class Task {
      */
     public Task() {
     }
+
+
+    private int retryCount = 0;         // Number of attempts made
+    private int maxRetries = 3;         // Configurable per task
+    private List<String> executionLogs = new ArrayList<>();  // Full log history
+
+
 
     /**
      * Constructs a fully-initialized Task.
@@ -106,4 +114,29 @@ public class Task {
     public void setLog(String log) {
         this.log = log;
     }
+
+    public int getRetryCount() {
+        return retryCount;
+    }
+
+    public void setRetryCount(int retryCount) {
+        this.retryCount = retryCount;
+    }
+
+    public int getMaxRetries() {
+        return maxRetries;
+    }
+
+    public void setMaxRetries(int maxRetries) {
+        this.maxRetries = maxRetries;
+    }
+
+    public List<String> getExecutionLogs() {
+        return executionLogs;
+    }
+
+    public void setExecutionLogs(List<String> executionLogs) {
+        this.executionLogs = executionLogs;
+    }
+
 }
