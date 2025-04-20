@@ -14,6 +14,31 @@ This project presents the design and development of a **Distributed Task Schedul
 
 Modern enterprise systems require execution of complex workflows that involve multiple interdependent tasks across distributed environments. Traditional schedulers lack scalability, dynamic task control, or failover handling. This project addresses the problem by developing a **DAG-based distributed task scheduler** that efficiently manages task dependencies, execution order, and fault tolerance, providing a modular, scalable, and reusable solution for orchestrating cloud-native operations.
 
+### 🔧 **Examples of Traditional Schedulers & Their Limitations**
+
+| **Traditional Scheduler** | **Limitations Compared to Your Project** |
+|---------------------------|------------------------------------------|
+| **Cron / crontab (Linux)** | - No support for task dependencies<br>- No retry/failure handling<br>- No distribution across nodes<br>- Hard-coded/static schedule |
+| **Quartz Scheduler** | - Mostly designed for monolithic or single-node systems<br>- Limited support for distributed fault-tolerant execution<br>- Lacks native DAG task orchestration |
+| **Spring @Scheduled** | - Embedded in single-instance Spring apps<br>- No parallel or distributed task execution<br>- No dependency resolution |
+| **Windows Task Scheduler** | - Single-machine only<br>- Not cloud-native<br>- No concept of task graphs or fault recovery |
+| **Airflow (Pre-optimized)** | - Airflow itself is DAG-based and powerful, but not lightweight for embedded use<br>- Setup overhead for small or custom environments |
+
+
+### ✅ **What this Project Improves**
+
+- **DAG awareness** → Executes tasks **only after dependencies complete**
+- **Distributed execution** → Tasks can run across nodes (via Kafka or REST)
+- **Resilience** → Uses **Redis** to track states; retries failed tasks
+- **Scalability** → Can handle many parallel workflows dynamically
+- **Modular** → Pluggable and lightweight compared to heavy-duty schedulers like Airflow
+
+In essence, this project fills the gap where traditional tools are either **too simple (like cron)** or **too heavy (like Airflow)** by offering a middle-ground: **lightweight, DAG-aware, distributed, and scalable**.
+
+
+> Traditional schedulers such as `cron`, `Quartz`, and `Spring's @Scheduled` are widely used for basic task automation but fall short when it comes to handling complex, interdependent workflows in a distributed environment. These tools typically lack support for dynamic task control, dependency resolution, failover handling, and scalable execution across multiple nodes. For example, `cron` and `Quartz` operate on static time-based triggers without awareness of task dependencies, while `Spring @Scheduled` is limited to single-instance execution within a monolithic application. Even more advanced solutions like Apache Airflow offer DAG-based scheduling but are often heavyweight and require significant setup, making them less suitable for lightweight or embedded use cases. This project addresses these limitations by developing a DAG-based Distributed Task Scheduler that offers a modular, scalable, and fault-tolerant approach to orchestrating cloud-native operations. By leveraging technologies like Spring Boot, Redis, Kafka, and Kubernetes, it enables efficient task orchestration with built-in support for retries, execution tracking, and dynamic dependency resolution.
+
+
 ---
 
 ### 🔬 **Research Scope (for Distributed Task Scheduler)**
