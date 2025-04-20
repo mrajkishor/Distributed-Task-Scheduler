@@ -48,6 +48,101 @@ The project covers an **exploratory and empirical study** in the field of **dist
 
 ---
 
+### 📊 **Data Requirements**
+
+This project primarily utilizes **secondary data** in the form of system-generated task metadata, execution logs, and DAG structures. The scheduler does not rely on external real-world datasets but instead works with internally defined task definitions, job dependencies, and runtime status data. The data includes:
+
+- **Task metadata**: Task ID, task name, type, command to execute, retry count, timeout, etc.  
+- **DAG structure**: Representation of task dependencies (edges and nodes)  
+- **Job metadata**: Job ID, user ID (if multi-tenant), job status (pending, running, failed, complete)  
+- **Execution logs**: Timestamps, outcomes, retries, error messages  
+- **Redis Data**: Stores task state, queues, and interim progress  
+- **Kafka Events**: Used for task communication and status propagation across services
+
+Thus, the project uses a **combination of simulated primary data** (created by the scheduler itself during runtime) and **secondary system-level data**, which are both crucial for evaluating task execution, fault tolerance, and performance analysis.
+
+
+### 📊 **Table: Data Requirements for Distributed Task Scheduler**
+
+| **Data Type**         | **Description**                                                                 | **Source**                        | **Usage**                                        |
+|----------------------|----------------------------------------------------------------------------------|-----------------------------------|--------------------------------------------------|
+| **Task Metadata**     | Task ID, name, type, command, retries, timeout                                  | Defined by user or system config | Used to schedule and execute individual tasks    |
+| **DAG Structure**     | Nodes (tasks) and Edges (dependencies between tasks)                            | User-defined / System-generated  | Determines execution order based on dependencies |
+| **Job Metadata**      | Job ID, job name, user ID, status (pending/running/failed/completed)            | Internally generated              | Tracks overall workflow execution                |
+| **Execution Logs**    | Start time, end time, success/failure status, error messages                    | Captured during runtime           | Used for debugging and audit                     |
+| **Redis Data Store**  | Task states, queues, retry counters, heartbeat/status values                    | System-level                      | Enables distributed state management             |
+| **Kafka Events**      | Task execution commands, status updates, retry triggers                         | System-generated                  | Enables asynchronous and decoupled communication |
+
+
+### 📁 **Sample Mock Data for Distributed Task Scheduler**
+
+#### 🧩 1. **Task Metadata**
+```json
+{
+  "taskId": "task_101",
+  "taskName": "SendEmail",
+  "type": "email",
+  "command": "python send_email.py",
+  "retries": 3,
+  "timeout": 60
+}
+```
+
+#### 🔗 2. **DAG Structure**
+```json
+{
+  "jobId": "job_202",
+  "tasks": ["task_101", "task_102", "task_103"],
+  "dependencies": {
+    "task_102": ["task_101"],
+    "task_103": ["task_102"]
+  }
+}
+```
+
+#### 📋 3. **Job Metadata**
+```json
+{
+  "jobId": "job_202",
+  "jobName": "DailyReportPipeline",
+  "userId": "user_1",
+  "status": "running"
+}
+```
+
+#### 📝 4. **Execution Logs**
+```json
+{
+  "taskId": "task_101",
+  "startTime": "2025-04-20T10:00:00Z",
+  "endTime": "2025-04-20T10:00:05Z",
+  "status": "success",
+  "logs": "Email sent successfully to 300 users."
+}
+```
+
+#### 🧠 5. **Redis Entry (Sample)**
+```json
+{
+  "key": "job_202:task_101:status",
+  "value": "completed"
+}
+```
+
+#### 🔄 6. **Kafka Event**
+```json
+{
+  "eventType": "TASK_COMPLETE",
+  "jobId": "job_202",
+  "taskId": "task_101",
+  "status": "success",
+  "timestamp": "2025-04-20T10:00:05Z"
+}
+```
+
+
+---
+
 ## 🧾 Project Overview
 
 **Title:** Design and Implementation of a Distributed Task Scheduler for Scalable Background Job Processing  
