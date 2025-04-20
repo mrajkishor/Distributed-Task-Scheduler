@@ -4,6 +4,25 @@ A **high-performance, distributed task scheduling system** designed to handle de
 
 ---
 
+### 🧾 **Abstract**
+
+This project presents the design and development of a **Distributed Task Scheduler** that orchestrates task execution based on **Directed Acyclic Graphs (DAGs)**. Built using **Spring Boot, Kafka, Redis, and Kubernetes**, the system ensures reliable, scalable, and fault-tolerant execution of interdependent tasks across distributed nodes. The scheduler supports real-time execution, failure recovery, retry mechanisms, and dependency management. It is suitable for cloud-native workloads such as data pipelines, CI/CD processes, and backend automation workflows.
+
+---
+
+### ❗ **Problem Statement**
+
+Modern enterprise systems require execution of complex workflows that involve multiple interdependent tasks across distributed environments. Traditional schedulers lack scalability, dynamic task control, or failover handling. This project addresses the problem by developing a **DAG-based distributed task scheduler** that efficiently manages task dependencies, execution order, and fault tolerance, providing a modular, scalable, and reusable solution for orchestrating cloud-native operations.
+
+---
+
+### 🔬 **Research Scope (for Distributed Task Scheduler)**
+
+The project covers an **exploratory and empirical study** in the field of **distributed systems and cloud-native task orchestration**. It investigates the design and implementation of a **fault-tolerant, DAG-based task scheduling system** using modern backend technologies like Spring Boot, Kafka, Redis, and Kubernetes. The system is applicable to real-world scenarios such as workflow automation, CI/CD pipelines, and data engineering job execution. The research may target a **general industry area**—specifically **cloud infrastructure and DevOps automation**—and can also be adapted for a **specific enterprise use case** like internal microservices coordination or multi-tenant job execution systems.
+
+
+---
+
 ## 🧾 Project Overview
 
 **Title:** Design and Implementation of a Distributed Task Scheduler for Scalable Background Job Processing  
@@ -155,11 +174,6 @@ This project showcases expertise in:
 **BALAKRUSHNA BEHERA** - Java Backend Developer | MCA | 3+ years of industry experience
 
 [LinkedIn](https://www.linkedin.com/in/balakrushna-behera-5687001a2/)
-
-
-**Abhishek Prasad** - Software Engineer | NIT Durgapur
-
-[LinkedIn](https://www.linkedin.com/in/compro-prasad/)
 
 ---
 
