@@ -5,7 +5,7 @@
 ### 🔹 Step 1: Core Setup & Architecture
 - [x] [1.1 Define architecture, detailed system design diagram, tech stack](https://github.com/mrajkishor/Distributed-Task-Scheduler/issues/29)  
 - [x] [1.2 Design APIs (OpenAPI), job model (with DAG support), Redis schema](https://github.com/mrajkishor/Distributed-Task-Scheduler/issues/31)  
-- [ ] 1.3 Setup Spring Boot modules, project structure, base entities  
+- [x] [1.3 Setup Spring Boot modules, project structure, base entities](https://github.com/mrajkishor/Distributed-Task-Scheduler/issues/56)  
 - [ ] 1.4 Configure Docker Compose: Redis, Kafka, PostgreSQL  
 - [ ] 1.5 Implement job submission API (POST `/tasks`)  
 - [ ] 1.6 Store tasks in Redis with priority/delay/tenant support  
