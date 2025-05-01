@@ -8,15 +8,16 @@ The design ensures **fast lookup**, **efficient updates**, and **scalability** f
 
 ## 📋 Key Naming Conventions
 
-| **Key Pattern**            | **Description**                           |
-|-----------------------------|-------------------------------------------|
-| `job:{jobId}`               | Stores metadata for a Job (DAG + details) |
-| `task:{taskId}`             | Stores metadata for a single Task         |
-| `dag:{jobId}`               | Stores task dependency map (Adjacency List) |
-| `job:{jobId}:status`        | Stores the current execution status of the job |
-| `task:{taskId}:status`      | Stores the current execution status of the task |
-| `task:{taskId}:log`         | Stores execution logs for a task |
-| `dlq:{jobId}`               | Dead Letter Queue for failed tasks in a job |
+| **Key Pattern**                | **Description**                                  |
+|-------------------------------|--------------------------------------------------|
+| `job:{jobId}`                 | Stores metadata for a Job (DAG + details)        |
+| `task:{taskId}`               | Stores metadata for a single Task                |
+| `dag:{jobId}:forward`         | Maps task ➝ list of children (Adjacency List)    |
+| `dag:{jobId}:reverse`         | Maps task ➝ list of parents (Inverse mapping)    |
+| `job:{jobId}:status`          | Stores the current execution status of the job   |
+| `task:{taskId}:status`        | Stores the current execution status of the task  |
+| `task:{taskId}:log`           | Stores execution logs for a task                 |
+| `dlq:{jobId}`                 | Dead Letter Queue for failed tasks in a job      |
 
 ---
 
@@ -47,16 +48,16 @@ HSET job:job_202 jobId "job_202" jobName "DailyReportPipeline" userId "user_1" c
 
 Stored as a **Redis Hash**.
 
-| Field         | Type    | Description                  |
-|---------------|---------|-------------------------------|
-| `taskId`      | String  | Unique Task ID                |
-| `taskName`    | String  | Human-readable task name      |
-| `command`     | String  | Command/script to execute     |
-| `retries`     | Number  | Retry count remaining         |
-| `timeout`     | Number  | Max execution time (seconds)  |
-| `status`      | String  | pending / running / failed / success |
-| `startTime`   | ISO8601 Timestamp | Start time         |
-| `endTime`     | ISO8601 Timestamp | End time           |
+| Field         | Type    | Description                          |
+|---------------|---------|--------------------------------------|
+| `taskId`      | String  | Unique Task ID                        |
+| `taskName`    | String  | Human-readable task name              |
+| `command`     | String  | Command/script to execute             |
+| `retries`     | Number  | Retry count remaining                 |
+| `timeout`     | Number  | Max execution time (seconds)          |
+| `status`      | String  | pending / running / failed / success  |
+| `startTime`   | ISO8601 Timestamp | Start time                 |
+| `endTime`     | ISO8601 Timestamp | End time                   |
 
 ✅ **Example (Hash Fields):**
 ```bash
@@ -65,28 +66,31 @@ HSET task:task_101 taskId "task_101" taskName "SendEmail" command "python send_e
 
 ---
 
-### 🔗 3. DAG Structure (`dag:{jobId}`)
+### 🔗 3. DAG Structure (`dag:{jobId}:forward`, `dag:{jobId}:reverse`)
 
-Stored as a **Redis JSON or Hash**, depending on use case.
+Stored as **Redis Hashes** for forward and reverse edges:
 
-- Each **key** = `taskId`
-- Each **value** = list of **child taskIds** that depend on this task.
+- `dag:{jobId}:forward` – task ➝ children
+- `dag:{jobId}:reverse` – task ➝ parents
 
 ✅ **Example (Hash Fields):**
 ```bash
-HSET dag:job_202 task_101 "[]" task_102 '["task_101"]' task_103 '["task_102"]'
+HSET dag:job_202:forward task_101 '["task_102"]'
+HSET dag:job_202:forward task_102 '["task_103"]'
+HSET dag:job_202:forward task_103 '[]'
+
+HSET dag:job_202:reverse task_101 '[]'
+HSET dag:job_202:reverse task_102 '["task_101"]'
+HSET dag:job_202:reverse task_103 '["task_102"]'
 ```
 
-Meaning:
-- `task_101` → no dependency
-- `task_102` → depends on `task_101`
-- `task_103` → depends on `task_102`
+📝 **Note:** For better scalability, forward/reverse edges can also be stored using `SADD dag:job_202:forward:{taskId}` and `SADD dag:job_202:reverse:{taskId}`.
 
 ---
 
 ### 📈 4. Execution Status (`task:{taskId}:status`, `job:{jobId}:status`)
 
-Simple **String** keys to **quickly check status** without reading full objects.
+Simple **String** keys for quick status checks.
 
 ✅ **Example:**
 ```bash
@@ -105,7 +109,7 @@ Simple **String** or **List** (if you want multiple log lines).
 SET task:task_101:log "Task executed successfully. Email sent to 300 users."
 ```
 
-Or if multiple lines:
+Or:
 ```bash
 LPUSH task:task_101:log "Starting execution" "Sending email" "Execution completed successfully"
 ```
@@ -121,19 +125,17 @@ Stores failed task IDs for a particular job.
 RPUSH dlq:job_202 task_105 task_110
 ```
 
-You can later retry or inspect these failed tasks separately.
-
 ---
 
 ## 🏗️ Access Patterns
 
-| **Action**                     | **Redis Operation**   |
-|---------------------------------|------------------------|
-| Submit a new Job                | HMSET job:{jobId}       |
-| Add Tasks and Dependencies      | HMSET task:{taskId}, HSET dag:{jobId} |
-| Update Task Status (Running, Success, Fail) | SET task:{taskId}:status |
-| Query Task Logs                 | GET task:{taskId}:log or LRANGE |
-| List Failed Tasks for Retry     | LRANGE dlq:{jobId} 0 -1 |
+| **Action**                     | **Redis Operation**               |
+|--------------------------------|-----------------------------------|
+| Submit a new Job              | HMSET job:{jobId}                 |
+| Add Tasks and Dependencies    | HMSET task:{taskId}, HSET dag:{jobId} |
+| Update Task Status            | SET task:{taskId}:status          |
+| Query Task Logs               | GET / LRANGE task:{taskId}:log    |
+| List Failed Tasks             | LRANGE dlq:{jobId} 0 -1           |
 
 ---
 
@@ -142,7 +144,8 @@ You can later retry or inspect these failed tasks separately.
 ```
 job:{jobId}              → Job metadata (Hash)
 task:{taskId}            → Task metadata (Hash)
-dag:{jobId}              → DAG dependency map (Hash)
+dag:{jobId}:forward      → Task ➝ Children mapping (Hash)
+dag:{jobId}:reverse      → Task ➝ Parent mapping (Hash)
 job:{jobId}:status       → Job execution status (String)
 task:{taskId}:status     → Task execution status (String)
 task:{taskId}:log        → Execution logs (String or List)
@@ -151,19 +154,58 @@ dlq:{jobId}              → Dead letter queue (List)
 
 ---
 
-# 🎯 Design Goals Achieved
-- Fast status checks without parsing large objects ✅
-- Easy DAG traversal for dependent tasks ✅
-- Lightweight, extendable, and scalable ✅
-- Future-proof for pause/resume, retries, and multi-tenant jobs ✅
+## 🧠 DAG Traversal Logic
+
+### ✅ Check if task is ready to execute:
+```
+parents = HGET dag:job_202:reverse task_102
+for each parent in parents:
+    if GET task:{parent}:status != "completed":
+        return false
+return true
+```
+
+### 📤 Trigger children after task completion:
+```
+children = HGET dag:job_202:forward task_101
+for each child in children:
+    if all parents of child are completed:
+        enqueue(child)
+```
 
 ---
 
-# ✨ Example Full Flow (Summary)
+## 🖼️ DAG Schema Diagram (Textual)
 
-1. User submits a job via API → Create `job:{jobId}`, tasks `task:{taskId}`, DAG `dag:{jobId}`
-2. Worker polls ready tasks → Check `dag:{jobId}` for available tasks (no incomplete parents)
-3. Worker executes a task → Updates `task:{taskId}:status`, `task:{taskId}:log`
-4. If task fails → Retry or move to `dlq:{jobId}`
-5. Job completes → Update `job:{jobId}:status` to "completed"
-    
+```
+               ┌────────────┐
+               │ task_101   │
+               └────┬───────┘
+                    │
+       ┌────────────▼────────────┐
+       │  dag:job_202:forward    │
+       │  task_101 ➝ [task_102]  │
+       └─────────────────────────┘
+                    │
+               ┌────▼─────┐
+               │ task_102 │
+               └────┬─────┘
+                    │
+       ┌────────────▼────────────┐
+       │  dag:job_202:forward    │
+       │  task_102 ➝ [task_103]  │
+       └─────────────────────────┘
+                    │
+               ┌────▼─────┐
+               │ task_103 │
+               └──────────┘
+```
+
+---
+
+## ✅ Summary
+
+- Fast DAG traversal using forward/reverse mappings
+- Efficient parent-checks before task execution
+- Scalable key structure for large distributed workflows
+- Flexible and ready for DAG executor integration
