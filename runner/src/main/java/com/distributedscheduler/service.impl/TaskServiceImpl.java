@@ -11,25 +11,26 @@ import org.springframework.stereotype.Service;
 import java.util.UUID;
 
 /**
- * Implementation of the TaskService interface.
- * Handles business logic for task creation and storage using an in-memory map.
+ * Implementation of TaskService that stores tasks in Redis and manages delayed execution using ZSET.
  */
 @Service
 public class TaskServiceImpl implements TaskService {
 
     private final TaskRedisRepository taskRedisRepository;
+    private final RedisDelayQueueService redisDelayQueueService;
 
     @Autowired
-    public TaskServiceImpl(TaskRedisRepository taskRedisRepository) {
+    public TaskServiceImpl(TaskRedisRepository taskRedisRepository, RedisDelayQueueService redisDelayQueueService) {
         this.taskRedisRepository = taskRedisRepository;
+        this.redisDelayQueueService = redisDelayQueueService;
     }
 
 
     /**
-     * Creates a new Task and stores it in Redis.
+     * Creates and stores a new Task. If delay is set, the task is added to a Redis ZSET.
      *
      * @param request The request object containing task metadata.
-     * @return The newly created Task with an assigned UUID and default status.
+     * @return The created Task with generated ID and metadata.
      */
     @Override
     public Task createTask(TaskRequest request) {
@@ -42,6 +43,12 @@ public class TaskServiceImpl implements TaskService {
         task.setDependencies(request.getDependencies());
         task.setStatus(TaskStatus.PENDING);
         task.setMaxRetries(request.getMaxRetries());
+
+        // Store in Redis ZSET if delay > 0
+        if (request.getDelaySeconds() > 0) {
+            redisDelayQueueService.addTaskToDelayQueue(task.getId(), request.getDelaySeconds());
+        }
+
         return taskRedisRepository.save(task);
     }
 }
