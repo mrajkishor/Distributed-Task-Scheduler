@@ -2,61 +2,36 @@ package com.distributedscheduler.model;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.redis.core.RedisHash;
 
 /**
  * Represents an individual task within a Job's Directed Acyclic Graph (DAG).
- * Each task can have dependencies on other tasks and contains its execution
- * status and logs.
+ * Each task can have dependencies on other tasks and contains its execution status and logs.
  */
+
+@RedisHash("Task")
 public class Task {
 
-    /**
-     * Unique identifier for the task.
-     */
-    private String id;
+    @Id
+    private String id;                              // Unique identifier for the task
+    private String name;                            // Human-readable task name
+    private List<String> dependencies;              // Task dependencies
+    private TaskStatus status;                      // Task state: PENDING, RUNNING, etc.
+    private String log;                             // Single log line (e.g., result or error)
 
-    /**
-     * Human-readable name for the task.
-     */
-    private String name;
+    private int retryCount = 0;                     // Retry attempts made
+    private int maxRetries = 3;                     // Retry limit
+    private List<String> executionLogs = new ArrayList<>();  // Full execution log history
 
-    /**
-     * List of task IDs that this task depends on.
-     */
-    private List<String> dependencies;
+    private Map<String, Object> payload;            // Dynamic input for the task
+    private int priority = 0;                       // Task priority (higher = more urgent)
+    private int delaySeconds = 0;                   // Optional delay before task execution
 
-    /**
-     * Current status of the task (PENDING, RUNNING, COMPLETED, etc.).
-     */
-    private TaskStatus status;
-
-    /**
-     * Execution log or output of the task.
-     */
-    private String log;
-
-    /**
-     * Default constructor.
-     */
     public Task() {
     }
 
-
-    private int retryCount = 0;         // Number of attempts made
-    private int maxRetries = 3;         // Configurable per task
-    private List<String> executionLogs = new ArrayList<>();  // Full log history
-
-
-
-    /**
-     * Constructs a fully-initialized Task.
-     *
-     * @param id           Unique task ID
-     * @param name         Task name
-     * @param dependencies List of task IDs this task depends on
-     * @param status       Current status of the task
-     * @param log          Task execution log or output
-     */
     public Task(String id, String name, List<String> dependencies, TaskStatus status, String log) {
         this.id = id;
         this.name = name;
@@ -65,52 +40,42 @@ public class Task {
         this.log = log;
     }
 
-    /** @return Unique task ID */
     public String getId() {
         return id;
     }
 
-    /** @param id Unique task ID */
     public void setId(String id) {
         this.id = id;
     }
 
-    /** @return Task name */
     public String getName() {
         return name;
     }
 
-    /** @param name Task name */
     public void setName(String name) {
         this.name = name;
     }
 
-    /** @return List of task IDs this task depends on */
     public List<String> getDependencies() {
         return dependencies;
     }
 
-    /** @param dependencies List of dependent task IDs */
     public void setDependencies(List<String> dependencies) {
         this.dependencies = dependencies;
     }
 
-    /** @return Current task status */
     public TaskStatus getStatus() {
         return status;
     }
 
-    /** @param status Status of the task */
     public void setStatus(TaskStatus status) {
         this.status = status;
     }
 
-    /** @return Execution log for this task */
     public String getLog() {
         return log;
     }
 
-    /** @param log Task execution log */
     public void setLog(String log) {
         this.log = log;
     }
@@ -139,4 +104,27 @@ public class Task {
         this.executionLogs = executionLogs;
     }
 
+    public Map<String, Object> getPayload() {
+        return payload;
+    }
+
+    public void setPayload(Map<String, Object> payload) {
+        this.payload = payload;
+    }
+
+    public int getPriority() {
+        return priority;
+    }
+
+    public void setPriority(int priority) {
+        this.priority = priority;
+    }
+
+    public int getDelaySeconds() {
+        return delaySeconds;
+    }
+
+    public void setDelaySeconds(int delaySeconds) {
+        this.delaySeconds = delaySeconds;
+    }
 }
