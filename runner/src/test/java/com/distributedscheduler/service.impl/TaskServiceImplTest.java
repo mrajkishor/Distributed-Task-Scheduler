@@ -3,9 +3,8 @@ package com.distributedscheduler.service.impl;
 import com.distributedscheduler.dto.TaskRequest;
 import com.distributedscheduler.model.Task;
 import com.distributedscheduler.model.TaskStatus;
+import com.distributedscheduler.redis.RedisDelayQueueService;
 import com.distributedscheduler.repository.TaskRedisRepository;
-import com.distributedscheduler.service.impl.TaskServiceImpl;
-import com.distributedscheduler.service.impl.RedisDelayQueueService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -27,8 +26,7 @@ class TaskServiceImplTest {
     void setUp() {
         taskRedisRepository = mock(TaskRedisRepository.class);
         redisDelayQueueService = mock(RedisDelayQueueService.class);
-        taskService = new TaskServiceImpl(taskRedisRepository);
-        taskService.redisDelayQueueService = redisDelayQueueService; // Manually inject if field injection
+        taskService = new TaskServiceImpl(redisDelayQueueService);
     }
 
     @Test
@@ -54,7 +52,7 @@ class TaskServiceImplTest {
         assertEquals("generate-report", result.getName());
         assertEquals(TaskStatus.PENDING, result.getStatus());
         verify(taskRedisRepository, times(1)).save(any(Task.class));
-        verify(redisDelayQueueService, never()).addTaskToDelayQueue(anyString(), anyInt());
+        verify(redisDelayQueueService, never()).addTaskToDelayQueue(anyString(),anyString(), anyInt());
     }
 
     @Test
@@ -75,6 +73,6 @@ class TaskServiceImplTest {
 
         assertEquals("delayed-task", task.getName());
         assertEquals(10, task.getDelaySeconds());
-        verify(redisDelayQueueService).addTaskToDelayQueue(eq(task.getId()), eq(10));
+        verify(redisDelayQueueService).addTaskToDelayQueue(eq(task.getId()),task.getTenantId(), eq(10));
     }
 }

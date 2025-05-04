@@ -3,8 +3,8 @@ package com.distributedscheduler.service;
 import com.distributedscheduler.dto.TaskRequest;
 import com.distributedscheduler.model.Task;
 import com.distributedscheduler.model.TaskStatus;
+import com.distributedscheduler.redis.RedisDelayQueueService;
 import com.distributedscheduler.repository.TaskRedisRepository;
-import com.distributedscheduler.service.impl.RedisDelayQueueService;
 import com.distributedscheduler.service.impl.TaskServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -64,7 +64,7 @@ public class TaskServiceTest {
         assertEquals("generate-report", result.getName());
         assertEquals(TaskStatus.PENDING, result.getStatus());
         verify(taskRedisRepository, times(1)).save(any(Task.class));
-        verify(redisDelayQueueService, never()).addTaskToDelayQueue(anyString(), anyInt());
+        verify(redisDelayQueueService, never()).addTaskToDelayQueue(anyString(), anyString(), anyInt());
     }
 
     @Test
@@ -96,7 +96,7 @@ public class TaskServiceTest {
         // Assert
         assertEquals("delayed-task", result.getName());
         assertEquals(30, result.getDelaySeconds());
-        verify(redisDelayQueueService, times(1)).addTaskToDelayQueue(result.getId(), 30);
+        verify(redisDelayQueueService, times(1)).addTaskToDelayQueue(result.getId(),result.getTenantId(), 30);
         verify(taskRedisRepository, times(1)).save(any(Task.class));
     }
 }
