@@ -11,7 +11,7 @@ import org.springframework.data.redis.core.RedisHash;
  * Each task can have dependencies on other tasks and contains its execution status and logs.
  */
 
-@RedisHash("Task")
+
 public class Task {
 
     @Id
@@ -28,6 +28,8 @@ public class Task {
     private Map<String, Object> payload;            // Dynamic input for the task
     private int priority = 0;                       // Task priority (higher = more urgent)
     private int delaySeconds = 0;                   // Optional delay before task execution
+
+    private String tenantId = "default"; // For now, hardcoded
 
     public Task() {
     }
@@ -126,5 +128,14 @@ public class Task {
 
     public void setDelaySeconds(int delaySeconds) {
         this.delaySeconds = delaySeconds;
+    }
+
+
+    public String getTenantId() {
+        return tenantId;
+    }
+
+    public void setTenantId(String tenantId) {
+        this.tenantId = tenantId;
     }
 }

@@ -57,6 +57,14 @@ public class TaskRequest {
     @Min(value = 0, message = "Max retries must be non-negative")
     private int maxRetries = 3;
 
+
+
+
+    @Size(max = 50)
+    private String tenantId = "default";
+
+
+
     /** Default constructor. */
     public TaskRequest() {}
 
@@ -150,5 +158,13 @@ public class TaskRequest {
     /** @param maxRetries Max retry attempts */
     public void setMaxRetries(int maxRetries) {
         this.maxRetries = maxRetries;
+    }
+
+    public String getTenantId() {
+        return tenantId;
+    }
+
+    public void setTenantId(String tenantId) {
+        this.tenantId = tenantId;
     }
 }

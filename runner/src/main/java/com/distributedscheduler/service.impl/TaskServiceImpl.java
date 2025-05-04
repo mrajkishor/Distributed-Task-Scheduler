@@ -3,11 +3,14 @@ package com.distributedscheduler.service.impl;
 import com.distributedscheduler.model.Task;
 import com.distributedscheduler.model.TaskStatus;
 import com.distributedscheduler.dto.TaskRequest;
+import com.distributedscheduler.redis.RedisDelayQueueService;
+import com.distributedscheduler.redis.RedisTaskStore;
 import com.distributedscheduler.service.TaskService;
 import com.distributedscheduler.repository.TaskRedisRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import java.util.UUID;
 
 /**
@@ -15,13 +18,15 @@ import java.util.UUID;
  */
 @Service
 public class TaskServiceImpl implements TaskService {
+    private static final Logger logger = LoggerFactory.getLogger(TaskServiceImpl.class);
 
-    private final TaskRedisRepository taskRedisRepository;
+    @Autowired
+    private RedisTaskStore redisTaskStore;
+
     private final RedisDelayQueueService redisDelayQueueService;
 
     @Autowired
-    public TaskServiceImpl(TaskRedisRepository taskRedisRepository, RedisDelayQueueService redisDelayQueueService) {
-        this.taskRedisRepository = taskRedisRepository;
+    public TaskServiceImpl(RedisDelayQueueService redisDelayQueueService) {
         this.redisDelayQueueService = redisDelayQueueService;
     }
 
@@ -43,12 +48,18 @@ public class TaskServiceImpl implements TaskService {
         task.setDependencies(request.getDependencies());
         task.setStatus(TaskStatus.PENDING);
         task.setMaxRetries(request.getMaxRetries());
+        task.setTenantId(request.getTenantId() != null ? request.getTenantId() : "default");
+
 
         // Store in Redis ZSET if delay > 0
         if (request.getDelaySeconds() > 0) {
-            redisDelayQueueService.addTaskToDelayQueue(task.getId(), request.getDelaySeconds());
+            redisDelayQueueService.addTaskToDelayQueue(task.getId(), task.getTenantId(), request.getDelaySeconds());
         }
 
-        return taskRedisRepository.save(task);
+        // ✅ Save using custom key format
+        redisTaskStore.save(task);
+        logger.info("✅ Task created with ID: {} for tenant: {}", task.getId(), task.getTenantId());
+
+        return task;
     }
 }
