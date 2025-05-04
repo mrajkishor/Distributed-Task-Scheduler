@@ -8,8 +8,8 @@
 - [x] [1.3 Setup Spring Boot modules, project structure, base entities](https://github.com/mrajkishor/Distributed-Task-Scheduler/issues/56)  
 - [x] [1.4 Configure Docker Compose: Redis, Kafka, PostgreSQL](https://github.com/mrajkishor/Distributed-Task-Scheduler/issues/58)  
 - [x] [1.5 Implement job submission API (POST `/tasks`)](https://github.com/mrajkishor/Distributed-Task-Scheduler/issues/60)  
-- [ ] [1.6 Store tasks in Redis with priority/delay/tenant support](https://github.com/mrajkishor/Distributed-Task-Scheduler/issues/62)  
-- [ ] 1.7 Track job status in Redis and expose GET `/tasks/{id}` endpoint  
+- [x] [1.6 Store tasks in Redis with priority/delay/tenant support](https://github.com/mrajkishor/Distributed-Task-Scheduler/issues/62)  
+- [ ] [1.7 Track job status in Redis and expose GET `/tasks/{id}` endpoint](https://github.com/mrajkishor/Distributed-Task-Scheduler/issues/64)
 - [ ] 1.8 Initialize GitHub repository with README and project setup  
 
 ---
