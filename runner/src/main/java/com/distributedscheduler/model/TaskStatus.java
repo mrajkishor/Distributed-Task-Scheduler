@@ -29,5 +29,16 @@ public enum TaskStatus {
     /**
      * The task was intentionally skipped (e.g., due to unmet dependencies).
      */
-    SKIPPED
+    SKIPPED,
+
+
+    /**
+     * The task is currently being retried due to a previous failure.
+     */
+    RETRYING,
+
+    /**
+     * The task has exceeded retry attempts and moved to DLQ.
+     */
+    DLQ
 }
