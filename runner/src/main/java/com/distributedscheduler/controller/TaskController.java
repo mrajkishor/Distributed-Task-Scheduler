@@ -34,4 +34,13 @@ public class TaskController {
 
         return ResponseEntity.ok(response);
     }
+
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Task> getTaskById(
+            @PathVariable String id,
+            @RequestHeader("X-Tenant-ID") String tenantId) {
+        Task task = taskService.getTaskById(tenantId, id);
+        return ResponseEntity.ok(task);
+    }
 }

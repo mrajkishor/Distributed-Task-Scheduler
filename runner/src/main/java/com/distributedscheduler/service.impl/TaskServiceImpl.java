@@ -1,5 +1,6 @@
 package com.distributedscheduler.service.impl;
 
+import com.distributedscheduler.exception.TaskNotFoundException;
 import com.distributedscheduler.model.Task;
 import com.distributedscheduler.model.TaskStatus;
 import com.distributedscheduler.dto.TaskRequest;
@@ -25,9 +26,15 @@ public class TaskServiceImpl implements TaskService {
 
     private final RedisDelayQueueService redisDelayQueueService;
 
+    private final TaskRedisRepository taskRedisRepository;
+
+
     @Autowired
-    public TaskServiceImpl(RedisDelayQueueService redisDelayQueueService) {
+    public TaskServiceImpl(RedisDelayQueueService redisDelayQueueService,  RedisTaskStore redisTaskStore,
+                           TaskRedisRepository taskRedisRepository) {
         this.redisDelayQueueService = redisDelayQueueService;
+        this.redisTaskStore = redisTaskStore;
+        this.taskRedisRepository = taskRedisRepository;
     }
 
 
@@ -57,9 +64,18 @@ public class TaskServiceImpl implements TaskService {
         }
 
         // ✅ Save using custom key format
-        redisTaskStore.save(task);
+        taskRedisRepository.save(task); // ensures it is saved as a JSON string
         logger.info("✅ Task created with ID: {} for tenant: {}", task.getId(), task.getTenantId());
 
+        return task;
+    }
+
+    @Override
+    public Task getTaskById(String tenantId, String taskId) {
+        Task task = taskRedisRepository.findById(tenantId, taskId);
+        if (task == null) {
+            throw new TaskNotFoundException(taskId);
+        }
         return task;
     }
 }
