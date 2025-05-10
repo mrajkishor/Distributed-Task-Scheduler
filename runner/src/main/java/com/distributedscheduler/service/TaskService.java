@@ -17,4 +17,8 @@ public interface TaskService {
      */
     Task createTask(TaskRequest request);
 
+
+    Task getTaskById(String tenantId, String taskId);
+
+
 }
