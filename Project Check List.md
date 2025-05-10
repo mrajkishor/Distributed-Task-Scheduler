@@ -15,7 +15,7 @@
 ---
 
 ### 🔹 Step 2: Retry Logic, Idempotency, and DAG Execution
-- [ ] 2.1 Implement retry mechanism (exponential backoff + max attempts)  
+- [ ] [2.1 Implement retry mechanism (exponential backoff + max attempts)](https://github.com/mrajkishor/Distributed-Task-Scheduler/issues/68)  
 - [ ] 2.2 Setup Dead Letter Queue (DLQ) using Redis/Kafka  
 - [ ] 2.3 Add idempotency and deduplication using UUID/hash keys  
 - [ ] 2.4 Implement DAG traversal, topological sort, and cycle detection  
