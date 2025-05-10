@@ -8,6 +8,7 @@ import com.distributedscheduler.util.RetryBackoffCalculator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import com.distributedscheduler.dlq.DeadLetterQueueService;
 
 @Service
 public class RetryHandler {
@@ -16,9 +17,13 @@ public class RetryHandler {
     private final RedisDelayQueueService delayQueue;
     private final TaskRedisRepository taskRepo;
 
-    public RetryHandler(RedisDelayQueueService delayQueue, TaskRedisRepository taskRepo) {
+    private final DeadLetterQueueService dlqService;
+
+
+    public RetryHandler(RedisDelayQueueService delayQueue, TaskRedisRepository taskRepo, DeadLetterQueueService dlqService) {
         this.delayQueue = delayQueue;
         this.taskRepo = taskRepo;
+        this.dlqService = dlqService;
     }
 
     public void handleRetry(Task task, String tenantId) {
@@ -33,11 +38,15 @@ public class RetryHandler {
             delayQueue.addTaskToDelayQueue(task.getId(), tenantId, delay);
             taskRepo.save(task);
 
-            logger.warn("Retrying task {} (Attempt {}/{}) after {}s", task.getId(), retryCount + 1, maxRetries, delay);
+            logger.warn("\uD83D\uDD01 Retrying task {} (Attempt {}/{}) after {}s", task.getId(), retryCount + 1, maxRetries, delay);
         } else {
-            task.setStatus(TaskStatus.FAILED); // DLQ optional
+            // task.setStatus(TaskStatus.FAILED);
+            task.setStatus(TaskStatus.DLQ);
+            task.setLog("Moved to DLQ after max retries");
             taskRepo.save(task);
-            logger.error("Task {} permanently failed after {} attempts", task.getId(), maxRetries);
+
+            dlqService.pushToDLQ(tenantId, task); // Push to DLQ
+            logger.error("📦 Task {} moved to DLQ after {} retries", task.getId(), maxRetries);
         }
     }
 }
