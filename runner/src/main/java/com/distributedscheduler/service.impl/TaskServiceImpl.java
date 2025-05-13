@@ -8,6 +8,7 @@ import com.distributedscheduler.redis.RedisDelayQueueService;
 import com.distributedscheduler.redis.RedisTaskStore;
 import com.distributedscheduler.service.TaskService;
 import com.distributedscheduler.repository.TaskRedisRepository;
+import com.distributedscheduler.service.idempotency.IdempotencyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.slf4j.Logger;
@@ -23,6 +24,9 @@ public class TaskServiceImpl implements TaskService {
 
     @Autowired
     private RedisTaskStore redisTaskStore;
+
+    @Autowired
+    private IdempotencyService idempotencyService;
 
     private final RedisDelayQueueService redisDelayQueueService;
 
@@ -46,28 +50,44 @@ public class TaskServiceImpl implements TaskService {
      */
     @Override
     public Task createTask(TaskRequest request) {
-        Task task = new Task();
-        task.setId(UUID.randomUUID().toString());
-        task.setName(request.getName());
-        task.setPayload(request.getPayload());
-        task.setPriority(request.getPriority());
-        task.setDelaySeconds(request.getDelaySeconds());
-        task.setDependencies(request.getDependencies());
-        task.setStatus(TaskStatus.PENDING);
-        task.setMaxRetries(request.getMaxRetries());
-        task.setTenantId(request.getTenantId() != null ? request.getTenantId() : "default");
+
+        String tenantId = request.getTenantId();
+        String key = idempotencyService.buildKey(tenantId, request.getIdempotencyKey(), request);
 
 
-        // Store in Redis ZSET if delay > 0
-        if (request.getDelaySeconds() > 0) {
-            redisDelayQueueService.addTaskToDelayQueue(task.getId(), task.getTenantId(), request.getDelaySeconds());
-        }
+// Check if a task already exists for the idempotency key
+        return idempotencyService.getTaskIdForKey(key)
+                .map(existingTaskId -> {
+                    logger.info("🔁 Duplicate task detected. Returning existing task ID: {}", existingTaskId);
+                    return taskRedisRepository.findById(tenantId, existingTaskId);
+                })
+                    .orElseGet(() -> {
+                        Task task = new Task();
+                        task.setId(UUID.randomUUID().toString());
+                        task.setName(request.getName());
+                        task.setPayload(request.getPayload());
+                        task.setPriority(request.getPriority());
+                        task.setDelaySeconds(request.getDelaySeconds());
+                        task.setDependencies(request.getDependencies());
+                        task.setStatus(TaskStatus.PENDING);
+                        task.setMaxRetries(request.getMaxRetries());
+                        task.setTenantId(request.getTenantId() != null ? request.getTenantId() : "default");
 
-        // ✅ Save using custom key format
-        taskRedisRepository.save(task); // ensures it is saved as a JSON string
-        logger.info("✅ Task created with ID: {} for tenant: {}", task.getId(), task.getTenantId());
 
-        return task;
+                        // Store in Redis ZSET if delay > 0
+                        if (request.getDelaySeconds() > 0) {
+                            redisDelayQueueService.addTaskToDelayQueue(task.getId(), task.getTenantId(), request.getDelaySeconds());
+                        }
+
+                        // ✅ Save using custom key format
+                        taskRedisRepository.save(task); // ensures it is saved as a JSON string
+                        logger.info("✅ Task created with ID: {} for tenant: {}", task.getId(), task.getTenantId());
+                        // 💾 Store idempotency mapping in Redis
+                        idempotencyService.storeKeyToTaskIdMapping(key, task.getId(), java.time.Duration.ofMinutes(10));
+
+                        return task;
+            });
+
     }
 
     @Override

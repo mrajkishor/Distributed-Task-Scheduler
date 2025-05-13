@@ -58,6 +58,10 @@ public class TaskRequest {
     private int maxRetries = 3;
 
 
+    private String idempotencyKey;
+
+
+
 
 
     @Size(max = 50)
@@ -166,5 +170,13 @@ public class TaskRequest {
 
     public void setTenantId(String tenantId) {
         this.tenantId = tenantId;
+    }
+
+    public String getIdempotencyKey() {
+        return idempotencyKey;
+    }
+
+    public void setIdempotencyKey(String idempotencyKey) {
+        this.idempotencyKey = idempotencyKey;
     }
 }
