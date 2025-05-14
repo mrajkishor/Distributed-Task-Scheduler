@@ -9,11 +9,13 @@ import com.distributedscheduler.redis.RedisTaskStore;
 import com.distributedscheduler.service.TaskService;
 import com.distributedscheduler.repository.TaskRedisRepository;
 import com.distributedscheduler.service.idempotency.IdempotencyService;
+import com.distributedscheduler.util.DagUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.util.UUID;
+import java.util.List;
 
 /**
  * Implementation of TaskService that stores tasks in Redis and manages delayed execution using ZSET.
@@ -55,7 +57,7 @@ public class TaskServiceImpl implements TaskService {
         String key = idempotencyService.buildKey(tenantId, request.getIdempotencyKey(), request);
 
 
-// Check if a task already exists for the idempotency key
+        // Check if a task already exists for the idempotency key
         return idempotencyService.getTaskIdForKey(key)
                 .map(existingTaskId -> {
                     logger.info("🔁 Duplicate task detected. Returning existing task ID: {}", existingTaskId);
@@ -72,6 +74,14 @@ public class TaskServiceImpl implements TaskService {
                         task.setStatus(TaskStatus.PENDING);
                         task.setMaxRetries(request.getMaxRetries());
                         task.setTenantId(request.getTenantId() != null ? request.getTenantId() : "default");
+
+                        // DAG validation before saving
+                        List<Task> allTasks = taskRedisRepository.findAllByTenantId(task.getTenantId());
+                        allTasks.add(task);
+
+                        if (DagUtils.hasCycle(allTasks)) {
+                            throw new IllegalStateException("🚫 Cycle detected in task dependencies. Cannot schedule this task.");
+                        }
 
 
                         // Store in Redis ZSET if delay > 0
