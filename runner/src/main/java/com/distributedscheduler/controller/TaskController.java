@@ -1,5 +1,6 @@
 package com.distributedscheduler.controller;
 
+import com.distributedscheduler.dto.ErrorResponse;
 import com.distributedscheduler.service.TaskService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -27,12 +28,19 @@ public class TaskController {
      * @return 200 OK with TaskResponse
      */
     @PostMapping
-    public ResponseEntity<TaskResponse> submitTask(@Valid @RequestBody TaskRequest request) {
-        Task task = taskService.createTask(request);
-
-        TaskResponse response = new TaskResponse(task);
-
-        return ResponseEntity.ok(response);
+    public ResponseEntity<?> submitTask(@Valid @RequestBody TaskRequest request) {
+        try {
+            Task task = taskService.createTask(request);
+            return ResponseEntity.ok(new TaskResponse(task));
+        } catch (IllegalStateException e) {
+            return ResponseEntity.badRequest().body(
+                    new ErrorResponse("🚫 DAG validation failed", e.getMessage())
+            );
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body(
+                    new ErrorResponse("❌ Internal Error", e.getMessage())
+            );
+        }
     }
 
 

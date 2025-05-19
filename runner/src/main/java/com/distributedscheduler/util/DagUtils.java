@@ -12,18 +12,25 @@ public class DagUtils {
         Map<String, List<String>> adjList = new HashMap<>();
         Map<String, Integer> inDegree = new HashMap<>();
 
+        // Initialize
         for (Task task : tasks) {
             adjList.putIfAbsent(task.getId(), new ArrayList<>());
             inDegree.putIfAbsent(task.getId(), 0);
         }
 
+        // Build graph
         for (Task task : tasks) {
             for (String dep : task.getDependencies()) {
+                if (!taskMap.containsKey(dep)) {
+                    throw new IllegalArgumentException("Dependency '" + dep + "' not found in task list.");
+                }
+
                 adjList.get(dep).add(task.getId());
                 inDegree.put(task.getId(), inDegree.getOrDefault(task.getId(), 0) + 1);
             }
         }
 
+        // Topological sort (Kahn's algorithm)
         Queue<String> queue = new LinkedList<>();
         for (String taskId : inDegree.keySet()) {
             if (inDegree.get(taskId) == 0) {
@@ -34,8 +41,7 @@ public class DagUtils {
         List<Task> sorted = new ArrayList<>();
         while (!queue.isEmpty()) {
             String currentId = queue.poll();
-            Task currentTask = taskMap.get(currentId);
-            sorted.add(currentTask);
+            sorted.add(taskMap.get(currentId));
 
             for (String neighbor : adjList.getOrDefault(currentId, new ArrayList<>())) {
                 inDegree.put(neighbor, inDegree.get(neighbor) - 1);
@@ -54,12 +60,11 @@ public class DagUtils {
 
     public static boolean hasCycle(List<Task> tasks) {
         try {
+            System.out.println("🧠 Checking cycle in tasks: " + tasks.stream().map(Task::getId).toList());
             topologicalSort(tasks);
             return false;
         } catch (IllegalStateException e) {
             return true;
         }
     }
-
-
 }
