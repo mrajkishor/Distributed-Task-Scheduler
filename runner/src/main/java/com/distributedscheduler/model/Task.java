@@ -29,7 +29,12 @@ public class Task {
     private int priority = 0;                       // Task priority (higher = more urgent)
     private int delaySeconds = 0;                   // Optional delay before task execution
 
+
     private String tenantId = "default"; // For now, hardcoded
+
+    //Field for Delay Calculation
+    private long createdAt = System.currentTimeMillis() / 1000L;
+
 
     public Task() {
     }
@@ -40,6 +45,7 @@ public class Task {
         this.dependencies = dependencies;
         this.status = status;
         this.log = log;
+        this.createdAt = System.currentTimeMillis() / 1000L;
     }
 
     public String getId() {
@@ -138,4 +144,7 @@ public class Task {
     public void setTenantId(String tenantId) {
         this.tenantId = tenantId;
     }
+
+    public long getCreatedAt() { return createdAt; }
+    public void setCreatedAt(long createdAt) { this.createdAt = createdAt; }
 }

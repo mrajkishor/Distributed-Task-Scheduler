@@ -1,6 +1,7 @@
 package com.distributedscheduler.repository;
 
 import com.distributedscheduler.model.Task;
+import com.distributedscheduler.model.TaskStatus;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Repository;
@@ -65,6 +66,16 @@ public class TaskRedisRepository {
 
         return result;
     }
+
+    public void updateTaskStatus(String tenantId, String taskId, TaskStatus status) {
+        Task task = findById(tenantId, taskId);
+        if (task == null) {
+            throw new IllegalStateException("Task not found for ID: " + taskId);
+        }
+        task.setStatus(status);
+        save(task); // Save the updated task
+    }
+
 
     public void delete(String tenantId, String taskId) {
         redisTemplate.delete(buildKey(tenantId, taskId));
