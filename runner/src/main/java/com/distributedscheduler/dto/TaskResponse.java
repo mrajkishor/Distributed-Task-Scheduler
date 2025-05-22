@@ -39,7 +39,6 @@ public class TaskResponse {
         this.payload = task.getPayload();
         this.priority = task.getPriority();
         this.delaySeconds = task.getDelaySeconds();
-        this.dependencies = task.getDependencies();
         this.status = task.getStatus();
         this.log = task.getLog();
         this.retryCount = task.getRetryCount();
@@ -92,13 +91,6 @@ public class TaskResponse {
         this.delaySeconds = delaySeconds;
     }
 
-    public List<String> getDependencies() {
-        return dependencies;
-    }
-
-    public void setDependencies(List<String> dependencies) {
-        this.dependencies = dependencies;
-    }
 
     public TaskStatus getStatus() {
         return status;

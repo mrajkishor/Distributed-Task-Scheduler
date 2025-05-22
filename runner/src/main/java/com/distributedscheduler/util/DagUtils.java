@@ -7,7 +7,7 @@ import java.util.stream.Collectors;
 
 public class DagUtils {
 
-    public static List<Task> topologicalSort(List<Task> tasks) {
+    public static List<Task> topologicalSort(List<Task> tasks, Map<String, List<String>> dependencyMap) {
         Map<String, Task> taskMap = tasks.stream().collect(Collectors.toMap(Task::getId, t -> t));
         Map<String, List<String>> adjList = new HashMap<>();
         Map<String, Integer> inDegree = new HashMap<>();
@@ -18,13 +18,13 @@ public class DagUtils {
             inDegree.putIfAbsent(task.getId(), 0);
         }
 
-        // Build graph
+        // Build graph using external dependency map
         for (Task task : tasks) {
-            for (String dep : task.getDependencies()) {
+            List<String> deps = dependencyMap.getOrDefault(task.getId(), Collections.emptyList());
+            for (String dep : deps) {
                 if (!taskMap.containsKey(dep)) {
                     throw new IllegalArgumentException("Dependency '" + dep + "' not found in task list.");
                 }
-
                 adjList.get(dep).add(task.getId());
                 inDegree.put(task.getId(), inDegree.getOrDefault(task.getId(), 0) + 1);
             }
@@ -58,13 +58,15 @@ public class DagUtils {
         return sorted;
     }
 
-    public static boolean hasCycle(List<Task> tasks) {
+
+    public static boolean hasCycle(List<Task> tasks, Map<String, List<String>> dependencyMap) {
         try {
             System.out.println("🧠 Checking cycle in tasks: " + tasks.stream().map(Task::getId).toList());
-            topologicalSort(tasks);
+            topologicalSort(tasks, dependencyMap);
             return false;
         } catch (IllegalStateException e) {
             return true;
         }
     }
+
 }
