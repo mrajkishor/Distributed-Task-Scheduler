@@ -22,7 +22,7 @@
 - [ ] 2.5 Build DAG executor to manage dependent task execution  
 - [ ] 2.6 Write unit + integration tests (API + DAG processor)  
 - [ ] 2.7 Finalize API contracts and handle edge cases (Swagger/OpenAPI)  
-- [ ] 2.8 Refactor codebase for modularity and cleanup  
+- [ ] 2.8 Refactor codebase for modularity and cleanup + The cycle detection defect fix  
 
 ---
 
