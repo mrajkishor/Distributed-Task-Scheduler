@@ -19,8 +19,8 @@
 - [x] [2.2 Setup Dead Letter Queue (DLQ) using Redis/Kafka](https://github.com/mrajkishor/Distributed-Task-Scheduler/issues/70)  
 - [x] [2.3 Add idempotency and deduplication using UUID/hash keys](https://github.com/mrajkishor/Distributed-Task-Scheduler/issues/72)  
 - [x] [2.4 Implement DAG traversal, topological sort, and cycle detection](https://github.com/mrajkishor/Distributed-Task-Scheduler/issues/74)  
-- [ ] [2.5 Build DAG executor to manage dependent task execution](https://github.com/mrajkishor/Distributed-Task-Scheduler/issues/76)  
-- [ ] 2.6 Write unit + integration tests (API + DAG processor)  
+- [x] [2.5 Build DAG executor to manage dependent task execution](https://github.com/mrajkishor/Distributed-Task-Scheduler/issues/76)  
+- [ ] [2.6 Write unit + integration tests (API + DAG processor)](https://github.com/mrajkishor/Distributed-Task-Scheduler/issues/78)  
 - [ ] 2.7 Finalize API contracts and handle edge cases (Swagger/OpenAPI)  
 - [ ] 2.8 Refactor codebase for modularity and cleanup + The cycle detection defect fix  
 
