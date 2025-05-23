@@ -14,6 +14,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.ArrayList;
+import java.util.Map;
 import java.util.UUID;
 import java.util.List;
 
@@ -33,6 +36,8 @@ public class TaskServiceImpl implements TaskService {
     private final RedisDelayQueueService redisDelayQueueService;
 
     private final TaskRedisRepository taskRedisRepository;
+
+
 
 
     @Autowired
@@ -70,19 +75,19 @@ public class TaskServiceImpl implements TaskService {
                         task.setPayload(request.getPayload());
                         task.setPriority(request.getPriority());
                         task.setDelaySeconds(request.getDelaySeconds());
-                        task.setDependencies(request.getDependencies());
                         task.setStatus(TaskStatus.PENDING);
                         task.setMaxRetries(request.getMaxRetries());
                         task.setTenantId(request.getTenantId() != null ? request.getTenantId() : "default");
 
                         // DAG validation before saving
                         List<Task> allTasks = taskRedisRepository.findAllByTenantId(task.getTenantId());
+                        Map<String, List<String>> dependencyMap = taskRedisRepository.getAllDependenciesMap(task.getTenantId());
                         allTasks.add(task);
 
 
                         logger.info("🧩 Checking DAG for task: {}", task.getId());
                         logger.info("Current DAG: {}", allTasks.stream().map(Task::getId).toList());
-                        if (DagUtils.hasCycle(allTasks)) {
+                        if (DagUtils.hasCycle(allTasks, dependencyMap)) {
                             logger.error("🚫 Cycle detected while scheduling task: {}", task.getId());
 
                             throw new IllegalStateException("🚫 Cycle detected in task dependencies. Cannot schedule this task.");
@@ -94,8 +99,8 @@ public class TaskServiceImpl implements TaskService {
                             redisDelayQueueService.addTaskToDelayQueue(task.getId(), task.getTenantId(), request.getDelaySeconds());
                         }
 
-                        // ✅ Save using custom key format
-                        taskRedisRepository.save(task); // ensures it is saved as a JSON string
+                        // Save to Redis and index by name
+                        taskRedisRepository.saveTaskAndIndex(task);
                         logger.info("✅ Task created with ID: {} for tenant: {}", task.getId(), task.getTenantId());
                         // 💾 Store idempotency mapping in Redis
                         idempotencyService.storeKeyToTaskIdMapping(key, task.getId(), java.time.Duration.ofMinutes(10));
@@ -113,4 +118,34 @@ public class TaskServiceImpl implements TaskService {
         }
         return task;
     }
+
+    @Override
+    public void addDependenciesByName(String tenantId, String taskName, List<String> dependsOn) {
+        String taskId = taskRedisRepository.getTaskIdByName(tenantId, taskName);
+        if (taskId == null) throw new IllegalArgumentException("❌ Task '" + taskName + "' not found.");
+
+        List<String> depIds = new ArrayList<>();
+        for (String depName : dependsOn) {
+            String depId = taskRedisRepository.getTaskIdByName(tenantId, depName);
+            if (depId == null)
+                throw new IllegalArgumentException("❌ Dependency '" + depName + "' not found.");
+            depIds.add(depId);
+        }
+
+        // 🔁 Validate DAG via external map
+        List<Task> allTasks = taskRedisRepository.findAllByTenantId(tenantId);
+        Map<String, List<String>> dependencyMap = taskRedisRepository.getAllDependenciesMap(tenantId);
+
+        // simulate adding the new edge
+        dependencyMap.put(taskId, depIds);
+
+        // ✅ validate before storing
+        if (DagUtils.hasCycle(allTasks, dependencyMap)) {
+            throw new IllegalStateException("🚫 Adding these dependencies would introduce a cycle.");
+        }
+
+        // Save to Redis only after successful validation
+        taskRedisRepository.saveDependencies(tenantId, taskId, depIds);
+    }
+
 }

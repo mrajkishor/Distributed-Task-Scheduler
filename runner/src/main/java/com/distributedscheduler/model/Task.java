@@ -17,7 +17,6 @@ public class Task {
     @Id
     private String id;                              // Unique identifier for the task
     private String name;                            // Human-readable task name
-    private List<String> dependencies;              // Task dependencies
     private TaskStatus status;                      // Task state: PENDING, RUNNING, etc.
     private String log;                             // Single log line (e.g., result or error)
 
@@ -39,10 +38,9 @@ public class Task {
     public Task() {
     }
 
-    public Task(String id, String name, List<String> dependencies, TaskStatus status, String log) {
+    public Task(String id, String name, TaskStatus status, String log) {
         this.id = id;
         this.name = name;
-        this.dependencies = dependencies;
         this.status = status;
         this.log = log;
         this.createdAt = System.currentTimeMillis() / 1000L;
@@ -64,13 +62,7 @@ public class Task {
         this.name = name;
     }
 
-    public List<String> getDependencies() {
-        return dependencies;
-    }
 
-    public void setDependencies(List<String> dependencies) {
-        this.dependencies = dependencies;
-    }
 
     public TaskStatus getStatus() {
         return status;

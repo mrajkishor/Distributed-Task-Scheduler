@@ -3,79 +3,77 @@ package com.distributedscheduler.util;
 import com.distributedscheduler.model.Task;
 import org.junit.jupiter.api.Test;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 public class DagUtilsTest {
 
-    private Task task(String id, String... deps) {
+    private Task task(String id) {
         Task t = new Task();
         t.setId(id);
-        t.setDependencies(Arrays.asList(deps));
         return t;
     }
 
     @Test
     public void testTopologicalSortLinearChain() {
-        List<Task> tasks = Arrays.asList(
-                task("A"),
-                task("B", "A"),
-                task("C", "B")
-        );
+        List<Task> tasks = Arrays.asList(task("A"), task("B"), task("C"));
 
-        List<Task> sorted = DagUtils.topologicalSort(tasks);
-        assertEquals(Arrays.asList("A", "B", "C"),
+        Map<String, List<String>> deps = new HashMap<>();
+        deps.put("B", List.of("A"));
+        deps.put("C", List.of("B"));
+
+        List<Task> sorted = DagUtils.topologicalSort(tasks, deps);
+        assertEquals(List.of("A", "B", "C"),
                 sorted.stream().map(Task::getId).toList());
     }
 
     @Test
     public void testTopologicalSortMultipleRoots() {
-        List<Task> tasks = Arrays.asList(
-                task("A"),
-                task("B"),
-                task("C", "A", "B")
-        );
+        List<Task> tasks = Arrays.asList(task("A"), task("B"), task("C"));
 
-        List<Task> sorted = DagUtils.topologicalSort(tasks);
+        Map<String, List<String>> deps = new HashMap<>();
+        deps.put("C", List.of("A", "B"));
+
+        List<Task> sorted = DagUtils.topologicalSort(tasks, deps);
         assertTrue(sorted.indexOf(taskWithId(sorted, "A")) < sorted.indexOf(taskWithId(sorted, "C")));
         assertTrue(sorted.indexOf(taskWithId(sorted, "B")) < sorted.indexOf(taskWithId(sorted, "C")));
     }
 
     @Test
     public void testTopologicalSortDisconnectedComponents() {
-        List<Task> tasks = Arrays.asList(
-                task("A"),
-                task("B", "A"),
-                task("C"),
-                task("D", "C")
-        );
+        List<Task> tasks = Arrays.asList(task("A"), task("B"), task("C"), task("D"));
 
-        List<Task> sorted = DagUtils.topologicalSort(tasks);
+        Map<String, List<String>> deps = new HashMap<>();
+        deps.put("B", List.of("A"));
+        deps.put("D", List.of("C"));
+
+        List<Task> sorted = DagUtils.topologicalSort(tasks, deps);
         assertTrue(sorted.indexOf(taskWithId(sorted, "A")) < sorted.indexOf(taskWithId(sorted, "B")));
         assertTrue(sorted.indexOf(taskWithId(sorted, "C")) < sorted.indexOf(taskWithId(sorted, "D")));
     }
 
     @Test
     public void testCycleDetection() {
-        List<Task> tasks = Arrays.asList(
-                task("A", "B"),
-                task("B", "C"),
-                task("C", "A")
-        );
+        List<Task> tasks = Arrays.asList(task("A"), task("B"), task("C"));
 
-        assertThrows(IllegalStateException.class, () -> DagUtils.topologicalSort(tasks));
-        assertTrue(DagUtils.hasCycle(tasks));
+        Map<String, List<String>> deps = new HashMap<>();
+        deps.put("A", List.of("C"));
+        deps.put("B", List.of("A"));
+        deps.put("C", List.of("B"));  // cycle A -> C -> B -> A
+
+        assertThrows(IllegalStateException.class, () -> DagUtils.topologicalSort(tasks, deps));
+        assertTrue(DagUtils.hasCycle(tasks, deps));
     }
 
     @Test
     public void testEmptyTaskList() {
         List<Task> tasks = Collections.emptyList();
-        List<Task> sorted = DagUtils.topologicalSort(tasks);
+        Map<String, List<String>> deps = new HashMap<>();
+
+        List<Task> sorted = DagUtils.topologicalSort(tasks, deps);
         assertTrue(sorted.isEmpty());
-        assertFalse(DagUtils.hasCycle(tasks));
+        assertFalse(DagUtils.hasCycle(tasks, deps));
     }
 
     private Task taskWithId(List<Task> tasks, String id) {

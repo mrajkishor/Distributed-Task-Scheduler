@@ -34,7 +34,6 @@ public class TaskApiIntegrationTest {
         newTask.setId("task123");
         newTask.setName("Sample Task");
         newTask.setTenantId("demo");
-        newTask.setDependencies(List.of());
         newTask.setPayload(Map.of("message", "Hello"));
         newTask.setStatus(TaskStatus.PENDING);
         newTask.setPriority(5);
