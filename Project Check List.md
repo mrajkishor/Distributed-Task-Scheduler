@@ -27,7 +27,7 @@
 ---
 
 ### 🔹 Step 3: Observability, Fault Tolerance, Security
-- [ ] 3.1 Integrate Prometheus metrics (queue size, execution time, failures)  
+- [x] [3.1 Integrate Prometheus metrics (queue size, execution time, failures)](https://github.com/mrajkishor/Distributed-Task-Scheduler/issues/83)  
 - [ ] 3.2 Set up Grafana dashboards  
 - [ ] 3.3 Add structured logging using SLF4J (JSON, correlation IDs)  
 - [ ] 3.4 Implement JWT-based auth with role-based access control  
