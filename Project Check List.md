@@ -29,7 +29,7 @@
 ### 🔹 Step 3: Observability, Fault Tolerance, Security
 - [x] [3.1 Integrate Prometheus metrics (queue size, execution time, failures)](https://github.com/mrajkishor/Distributed-Task-Scheduler/issues/83)  
 - [x] [3.2 Set up Grafana dashboards](https://github.com/mrajkishor/Distributed-Task-Scheduler/issues/85)  
-- [ ] 3.3 Add structured logging using SLF4J (JSON, correlation IDs)  
+- [x] [3.3 Add structured logging using SLF4J (JSON, correlation IDs)](https://github.com/mrajkishor/Distributed-Task-Scheduler/issues/87)  
 - [ ] 3.4 Implement JWT-based auth with role-based access control  
 - [ ] 3.5 Add distributed locking for task leasing (Redis SETNX or Redisson)  
 - [ ] 3.6 Implement graceful shutdown, signal handling, and health checks  
