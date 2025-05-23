@@ -42,7 +42,6 @@ public class TaskControllerTest {
         request.setPayload(Map.of("type", "pdf", "data", "test"));
         request.setPriority(5);
         request.setDelaySeconds(10);
-        request.setDependencies(List.of("task123", "task456"));
         request.setMaxRetries(3);
 
         // Mocked Task return from service
@@ -52,7 +51,6 @@ public class TaskControllerTest {
         mockTask.setPayload(request.getPayload());
         mockTask.setPriority(request.getPriority());
         mockTask.setDelaySeconds(request.getDelaySeconds());
-        mockTask.setDependencies(request.getDependencies());
         mockTask.setStatus(TaskStatus.PENDING);
         mockTask.setMaxRetries(request.getMaxRetries());
 

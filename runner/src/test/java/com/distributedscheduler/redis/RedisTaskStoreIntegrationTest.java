@@ -33,7 +33,6 @@ public class RedisTaskStoreIntegrationTest {
         sampleTask.setName("integration-test-task");
         sampleTask.setTenantId("testTenant");
         sampleTask.setPayload(Map.of("key", "value"));
-        sampleTask.setDependencies(List.of("dep1", "dep2"));
         sampleTask.setStatus(TaskStatus.PENDING);
         sampleTask.setMaxRetries(5);
         sampleTask.setDelaySeconds(15);
@@ -56,6 +55,5 @@ public class RedisTaskStoreIntegrationTest {
         assertEquals(3, fetched.getPriority());
         assertEquals(5, fetched.getMaxRetries());
         assertEquals(Map.of("key", "value"), fetched.getPayload());
-        assertEquals(List.of("dep1", "dep2"), fetched.getDependencies());
     }
 }

@@ -35,7 +35,6 @@ public class RedisPersistenceIntegrationTest {
         task.setRetryCount(1);
         task.setDelaySeconds(5);
         task.setPayload(Map.of("format", "csv", "source", "db"));
-        task.setDependencies(List.of("dep1", "dep2"));
 
         // When
         redisTaskStore.save(task);
@@ -52,6 +51,5 @@ public class RedisPersistenceIntegrationTest {
         assertEquals(task.getRetryCount(), fetched.getRetryCount());
         assertEquals(task.getDelaySeconds(), fetched.getDelaySeconds());
         assertEquals(task.getPayload().get("format"), "csv");
-        assertTrue(fetched.getDependencies().contains("dep1"));
     }
 }

@@ -16,6 +16,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
+import java.util.Map;
 import java.util.UUID;
 import java.util.List;
 
@@ -80,12 +81,13 @@ public class TaskServiceImpl implements TaskService {
 
                         // DAG validation before saving
                         List<Task> allTasks = taskRedisRepository.findAllByTenantId(task.getTenantId());
+                        Map<String, List<String>> dependencyMap = taskRedisRepository.getAllDependenciesMap(task.getTenantId());
                         allTasks.add(task);
 
 
                         logger.info("🧩 Checking DAG for task: {}", task.getId());
                         logger.info("Current DAG: {}", allTasks.stream().map(Task::getId).toList());
-                        if (DagUtils.hasCycle(allTasks)) {
+                        if (DagUtils.hasCycle(allTasks, dependencyMap)) {
                             logger.error("🚫 Cycle detected while scheduling task: {}", task.getId());
 
                             throw new IllegalStateException("🚫 Cycle detected in task dependencies. Cannot schedule this task.");

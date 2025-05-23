@@ -50,7 +50,6 @@ public class TaskServiceTest {
         savedTask.setPayload(request.getPayload());
         savedTask.setPriority(request.getPriority());
         savedTask.setDelaySeconds(0);
-        savedTask.setDependencies(request.getDependencies());
         savedTask.setMaxRetries(request.getMaxRetries());
         savedTask.setStatus(TaskStatus.PENDING);
 
@@ -84,7 +83,6 @@ public class TaskServiceTest {
         savedTask.setPayload(request.getPayload());
         savedTask.setPriority(request.getPriority());
         savedTask.setDelaySeconds(30);
-        savedTask.setDependencies(request.getDependencies());
         savedTask.setMaxRetries(request.getMaxRetries());
         savedTask.setStatus(TaskStatus.PENDING);
 
