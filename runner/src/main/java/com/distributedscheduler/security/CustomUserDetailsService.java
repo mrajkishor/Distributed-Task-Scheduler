@@ -6,17 +6,14 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
-
 @Service
 public class CustomUserDetailsService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        // Example only – replace with DB logic
         if (username.equals("admin")) {
             return User.builder()
                     .username("admin")
-                    .password("{noop}password") // {noop} disables encoding
+                    .password("{noop}password")
                     .roles("ADMIN")
                     .build();
         } else {

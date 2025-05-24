@@ -1,6 +1,7 @@
 
 package com.distributedscheduler.service.dag;
 
+import com.distributedscheduler.lock.RedisLockService;
 import com.distributedscheduler.model.Task;
 import com.distributedscheduler.model.TaskStatus;
 import com.distributedscheduler.repository.TaskRedisRepository;
@@ -17,7 +18,8 @@ public class TaskRunnerTest {
     @BeforeEach
     void setUp() {
         taskRepository = mock(TaskRedisRepository.class);
-        taskRunner = new TaskRunner(taskRepository);
+        RedisLockService redisLockService = mock(RedisLockService.class);
+        taskRunner = new TaskRunner(taskRepository, redisLockService);
     }
 
     @Test
