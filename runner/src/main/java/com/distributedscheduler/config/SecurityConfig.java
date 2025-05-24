@@ -25,6 +25,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/auth/**").permitAll()   // Public login/register
                         .requestMatchers("/admin/**").hasRole("ADMIN") // Admin-only
+                        .requestMatchers("/tasks/**").permitAll()   // TEMPORARY for testing
                         .anyRequest().authenticated()              // All others need auth
                 )
                 .sessionManagement(session -> session
