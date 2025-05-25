@@ -26,8 +26,10 @@ public class SecurityConfig {
                         .requestMatchers("/auth/**").permitAll()   // Public login/register
                         .requestMatchers("/admin/**").hasRole("ADMIN") // Admin-only
                         .requestMatchers("/tasks/**").permitAll()   // TEMPORARY for testing
+                        .requestMatchers("/actuator/**").authenticated() // 👈 actuator now requires login
                         .anyRequest().authenticated()              // All others need auth
                 )
+                .httpBasic(customizer -> {})// 👈 enables basic auth for actuator
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )

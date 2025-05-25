@@ -11,6 +11,10 @@ spring:
     port: 6379
   kafka:
     bootstrap-servers: localhost:9092
+  security:
+    user:
+      name: admin
+      password: secret123
 
 logging:
   level:
@@ -20,7 +24,15 @@ management:
   endpoints:
     web:
       exposure:
-        include: "prometheus"
+        include: health,info,prometheus
+  health:
+    redis:
+      enabled: true
+    diskspace:
+      enabled: true
+  endpoint:
+    health:
+      show-details: always
   metrics:
     export:
       prometheus:
