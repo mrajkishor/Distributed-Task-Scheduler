@@ -122,6 +122,12 @@
 			<scope>provided</scope>
 		</dependency>
 
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-actuator</artifactId>
+		</dependency>
+
+
 		<!-- SLF4J for logging (already used via Spring Boot typically) -->
 		<dependency>
 			<groupId>org.slf4j</groupId>
