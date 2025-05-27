@@ -68,7 +68,7 @@
 
 ---
 
-### 🔹 Step 7: MCA Report Formatting & Submission
+### 🔹 Step 7: MCA Report Formatting & Submission (Not part of PR)
 - [x] 7.1 Prepare Abstract/Summary (3–4 pages)  
 - [x] 7.2 Write Acknowledgement section  
 - [x] 7.3 Fill in Guide Certificate (Annexure A format)  
