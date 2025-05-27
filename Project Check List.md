@@ -69,16 +69,16 @@
 ---
 
 ### 🔹 Step 7: MCA Report Formatting & Submission
-- [ ] 7.1 Prepare Abstract/Summary (3–4 pages)  
-- [ ] 7.2 Write Acknowledgement section  
-- [ ] 7.3 Fill in Guide Certificate (Annexure A format)  
-- [ ] 7.4 Clearly define Objective & Scope of the project  
-- [ ] 7.5 Add Process Description with Flowchart/DFD/UML  
-- [ ] 7.6 Describe Methodology adopted, implementation steps  
-- [ ] 7.7 Include Testing methodology and attach test reports  
-- [ ] 7.8 Create User Manual (access, backup, security, roles)  
-- [ ] 7.9 Build Data Dictionary (data fields, types, format)  
-- [ ] 7.10 Compile screenshots of input/output UIs and system logs  
-- [ ] 7.11 Prepare Bibliography/References section  
-- [ ] 7.12 Submit soft copy to LMS and bind hard copy as per format  
+- [x] 7.1 Prepare Abstract/Summary (3–4 pages)  
+- [x] 7.2 Write Acknowledgement section  
+- [x] 7.3 Fill in Guide Certificate (Annexure A format)  
+- [x] 7.4 Clearly define Objective & Scope of the project  
+- [x] 7.5 Add Process Description with Flowchart/DFD/UML  
+- [x] 7.6 Describe Methodology adopted, implementation steps  
+- [x] 7.7 Include Testing methodology and attach test reports  
+- [x] 7.8 Create User Manual (access, backup, security, roles)  
+- [x] 7.9 Build Data Dictionary (data fields, types, format)  
+- [x] 7.10 Compile screenshots of input/output UIs and system logs  
+- [x] 7.11 Prepare Bibliography/References section  
+- [x] 7.12 Submit soft copy to LMS and bind hard copy as per format  
 
