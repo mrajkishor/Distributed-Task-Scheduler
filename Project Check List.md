@@ -16,13 +16,14 @@
 
 ### 🔹 Step 2: Retry Logic, Idempotency, and DAG Execution
 - [x] [2.1 Implement retry mechanism (exponential backoff + max attempts)](https://github.com/mrajkishor/Distributed-Task-Scheduler/issues/68)  
-- [x] [2.2 Setup Dead Letter Queue (DLQ) using Redis/Kafka](https://github.com/mrajkishor/Distributed-Task-Scheduler/issues/70)  
+- [x] [2.2 Setup Dead Letter Queue (DLQ) using Redis/~~Kafka~~](https://github.com/mrajkishor/Distributed-Task-Scheduler/issues/70)  
 - [x] [2.3 Add idempotency and deduplication using UUID/hash keys](https://github.com/mrajkishor/Distributed-Task-Scheduler/issues/72)  
 - [x] [2.4 Implement DAG traversal, topological sort, and cycle detection](https://github.com/mrajkishor/Distributed-Task-Scheduler/issues/74)  
 - [x] [2.5 Build DAG executor to manage dependent task execution](https://github.com/mrajkishor/Distributed-Task-Scheduler/issues/76)  
 - [x] [2.6 Write unit + integration tests (API + DAG processor)](https://github.com/mrajkishor/Distributed-Task-Scheduler/issues/78)  
 - [x] [2.7 Finalize API contracts and handle edge cases (Swagger/OpenAPI)](https://github.com/mrajkishor/Distributed-Task-Scheduler/issues/79)  
 - [x] [2.8 Refactor codebase for modularity and cleanup + The cycle detection defect fix](https://github.com/mrajkishor/Distributed-Task-Scheduler/issues/81)  
+- [ ] [2.9 Persist task metadata to PostgreSQL for tracking]
 
 ---
 
@@ -34,6 +35,7 @@
 - [x] [3.5 Add distributed locking for task leasing (Redis SETNX or Redisson)](https://github.com/mrajkishor/Distributed-Task-Scheduler/issues/91)  
 - [x] [3.6 Implement graceful shutdown, signal handling, and health checks](https://github.com/mrajkishor/Distributed-Task-Scheduler/issues/93)  
 - [x] [3.7 Run and validate full task lifecycle: submit ➝ lease ➝ execute ➝ status](https://github.com/mrajkishor/Distributed-Task-Scheduler/issues/95)  
+- [ ] [3.8 Publish task events to Kafka (for DLQ and analytics)]
 
 ---
 
