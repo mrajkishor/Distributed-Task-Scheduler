@@ -29,6 +29,9 @@ public class Task {
     private int delaySeconds = 0;                   // Optional delay before task execution
 
 
+    private String notificationUrl;
+    private String notificationEmail;
+
     private String tenantId = "default"; // For now, hardcoded
 
     //Field for Delay Calculation
@@ -139,4 +142,20 @@ public class Task {
 
     public long getCreatedAt() { return createdAt; }
     public void setCreatedAt(long createdAt) { this.createdAt = createdAt; }
+
+    public String getNotificationUrl() {
+        return notificationUrl;
+    }
+
+    public void setNotificationUrl(String notificationUrl) {
+        this.notificationUrl = notificationUrl;
+    }
+
+    public String getNotificationEmail() {
+        return notificationEmail;
+    }
+
+    public void setNotificationEmail(String notificationEmail) {
+        this.notificationEmail = notificationEmail;
+    }
 }

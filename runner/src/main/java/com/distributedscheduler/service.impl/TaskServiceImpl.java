@@ -6,6 +6,7 @@ import com.distributedscheduler.model.TaskStatus;
 import com.distributedscheduler.dto.TaskRequest;
 import com.distributedscheduler.redis.RedisDelayQueueService;
 import com.distributedscheduler.redis.RedisTaskStore;
+import com.distributedscheduler.retry.RetryHandler;
 import com.distributedscheduler.service.TaskService;
 import com.distributedscheduler.repository.TaskRedisRepository;
 import com.distributedscheduler.service.idempotency.IdempotencyService;
@@ -27,6 +28,8 @@ import java.util.List;
 public class TaskServiceImpl implements TaskService {
     private static final Logger logger = LoggerFactory.getLogger(TaskServiceImpl.class);
 
+    private final RetryHandler retryHandler;
+
     @Autowired
     private RedisTaskStore redisTaskStore;
 
@@ -41,8 +44,9 @@ public class TaskServiceImpl implements TaskService {
 
 
     @Autowired
-    public TaskServiceImpl(RedisDelayQueueService redisDelayQueueService,  RedisTaskStore redisTaskStore,
+    public TaskServiceImpl(RetryHandler retryHandler, RedisDelayQueueService redisDelayQueueService, RedisTaskStore redisTaskStore,
                            TaskRedisRepository taskRedisRepository) {
+        this.retryHandler = retryHandler;
         this.redisDelayQueueService = redisDelayQueueService;
         this.redisTaskStore = redisTaskStore;
         this.taskRedisRepository = taskRedisRepository;
@@ -78,6 +82,8 @@ public class TaskServiceImpl implements TaskService {
                         task.setStatus(TaskStatus.PENDING);
                         task.setMaxRetries(request.getMaxRetries());
                         task.setTenantId(request.getTenantId() != null ? request.getTenantId() : "default");
+                        task.setNotificationUrl(request.getNotificationUrl());
+                        task.setNotificationEmail(request.getNotificationEmail());
 
                         // DAG validation before saving
                         List<Task> allTasks = taskRedisRepository.findAllByTenantId(task.getTenantId());
@@ -95,8 +101,11 @@ public class TaskServiceImpl implements TaskService {
 
 
                         // Store in Redis ZSET if delay > 0
+                        // Trigger immediate or delayed execution
                         if (request.getDelaySeconds() > 0) {
                             redisDelayQueueService.addTaskToDelayQueue(task.getId(), task.getTenantId(), request.getDelaySeconds());
+                        }else {
+                            retryHandler.handle(task); // 🔁 immediately execute
                         }
 
                         // Save to Redis and index by name

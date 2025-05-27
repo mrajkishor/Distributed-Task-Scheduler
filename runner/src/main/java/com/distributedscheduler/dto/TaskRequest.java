@@ -61,7 +61,8 @@ public class TaskRequest {
     private String idempotencyKey;
 
 
-
+    private String notificationUrl;       // For webhook
+    private String notificationEmail;     // For future email notifications
 
 
     @Size(max = 50)
@@ -178,5 +179,21 @@ public class TaskRequest {
 
     public void setIdempotencyKey(String idempotencyKey) {
         this.idempotencyKey = idempotencyKey;
+    }
+
+    public String getNotificationUrl() {
+        return notificationUrl;
+    }
+
+    public void setNotificationUrl(String notificationUrl) {
+        this.notificationUrl = notificationUrl;
+    }
+
+    public String getNotificationEmail() {
+        return notificationEmail;
+    }
+
+    public void setNotificationEmail(String notificationEmail) {
+        this.notificationEmail = notificationEmail;
     }
 }
