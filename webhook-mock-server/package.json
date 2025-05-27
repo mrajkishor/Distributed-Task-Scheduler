@@ -1,0 +1,21 @@
+{
+  "name": "webhook-mock-server",
+  "version": "1.0.0",
+  "description": "Mock server to receive and log webhook payloads for testing Distributed Task Scheduler notifications",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "keywords": [
+    "webhook",
+    "mock",
+    "express",
+    "task-scheduler",
+    "receiver"
+  ],
+  "author": "Your Name",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.18.2"
+  }
+}
