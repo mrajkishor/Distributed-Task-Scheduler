@@ -1,5 +1,6 @@
 package com.distributedscheduler.retry;
 
+import com.distributedscheduler.consumer.TaskExecutor;
 import com.distributedscheduler.model.Task;
 import com.distributedscheduler.model.TaskStatus;
 import com.distributedscheduler.redis.RedisDelayQueueService;
@@ -7,6 +8,7 @@ import com.distributedscheduler.repository.TaskRedisRepository;
 import com.distributedscheduler.util.RetryBackoffCalculator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.distributedscheduler.dlq.DeadLetterQueueService;
 
@@ -19,11 +21,13 @@ public class RetryHandler {
 
     private final DeadLetterQueueService dlqService;
 
+    private final TaskExecutor taskExecutor;
 
-    public RetryHandler(RedisDelayQueueService delayQueue, TaskRedisRepository taskRepo, DeadLetterQueueService dlqService) {
+    public RetryHandler(RedisDelayQueueService delayQueue, TaskRedisRepository taskRepo, DeadLetterQueueService dlqService, TaskExecutor taskExecutor) {
         this.delayQueue = delayQueue;
         this.taskRepo = taskRepo;
         this.dlqService = dlqService;
+        this.taskExecutor = taskExecutor;
     }
 
     public void handleRetry(Task task, String tenantId) {
@@ -47,6 +51,17 @@ public class RetryHandler {
 
             dlqService.pushToDLQ(tenantId, task); // Push to DLQ
             logger.error("📦 Task {} moved to DLQ after {} retries", task.getId(), maxRetries);
+        }
+    }
+
+    public void handle(Task task) {
+        try {
+            logger.info("🚀 Executing task {}", task.getId());
+            taskExecutor.processTask(task);
+            taskRepo.save(task); // ✅ Persist status change after execution
+        } catch (Exception e) {
+            logger.error("❌ Execution failed for task {}: {}", task.getId(), e.getMessage());
+            handleRetry(task, task.getTenantId());
         }
     }
 }

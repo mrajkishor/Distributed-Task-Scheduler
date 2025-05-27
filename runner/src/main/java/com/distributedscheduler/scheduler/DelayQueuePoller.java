@@ -14,6 +14,7 @@ import com.distributedscheduler.model.Task;
 import com.distributedscheduler.model.TaskStatus;
 import com.distributedscheduler.repository.TaskRedisRepository;
 import com.distributedscheduler.retry.RetryHandler;
+import com.distributedscheduler.lock.RedisLockService;
 
 @Component
 public class DelayQueuePoller {
@@ -22,16 +23,19 @@ public class DelayQueuePoller {
     private final TaskRedisRepository taskRepo;
     private final RetryHandler retryHandler;
 
+    private final RedisLockService lockService;
+
     private final RedisDelayQueueService delayQueueService;
     // Example tenant list; in production, dynamically fetch this from DB or config
     private final List<String> tenants = List.of("default", "clientA", "clientB");
     public DelayQueuePoller(RedisDelayQueueService delayQueueService,
                             TaskRedisRepository taskRepo,
-                            RetryHandler retryHandler
-                            ) {
+                            RetryHandler retryHandler, RedisLockService lockService
+    ) {
         this.delayQueueService = delayQueueService;
         this.taskRepo = taskRepo;
         this.retryHandler = retryHandler;
+        this.lockService = lockService;
     }
 
 
@@ -55,22 +59,31 @@ public class DelayQueuePoller {
                 }
 
                 logger.info(" Executing task {} (tenant: {})", taskId, tenantId);
-                task.setStatus(TaskStatus.RUNNING);
-                taskRepo.save(task);
+//                task.setStatus(TaskStatus.RUNNING);
+//                taskRepo.save(task);
 
+//                try {
+//                    // Simulate execution logic
+//                    if (task.getPayload() == null || task.getPayload().isEmpty()) {
+//                        throw new RuntimeException("Missing payload");
+//                    }
+//
+//                    task.setStatus(TaskStatus.COMPLETED);
+//                    taskRepo.save(task);
+//                    logger.info(" Task {} completed", taskId);
+//
+//                } catch (Exception e) {
+//                    logger.error(" Task {} failed: {}", taskId, e.getMessage());
+//                    retryHandler.handleRetry(task, tenantId);
+//                }
+                if (!lockService.acquireLock(taskId, 30000)) {
+                    logger.info("⏳ Skipping task {}: already locked", taskId);
+                    continue;
+                }
                 try {
-                    // Simulate execution logic
-                    if (task.getPayload() == null || task.getPayload().isEmpty()) {
-                        throw new RuntimeException("Missing payload");
-                    }
-
-                    task.setStatus(TaskStatus.COMPLETED);
-                    taskRepo.save(task);
-                    logger.info(" Task {} completed", taskId);
-
+                    retryHandler.handle(task); // 🔄 Internally calls taskExecutor.processTask(task)
                 } catch (Exception e) {
-                    logger.error(" Task {} failed: {}", taskId, e.getMessage());
-                    retryHandler.handleRetry(task, tenantId);
+                    logger.error(" Unexpected error while processing task {}: {}", taskId, e.getMessage());
                 }
 
             }
