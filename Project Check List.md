@@ -23,7 +23,7 @@
 - [x] [2.6 Write unit + integration tests (API + DAG processor)](https://github.com/mrajkishor/Distributed-Task-Scheduler/issues/78)  
 - [x] [2.7 Finalize API contracts and handle edge cases (Swagger/OpenAPI)](https://github.com/mrajkishor/Distributed-Task-Scheduler/issues/79)  
 - [x] [2.8 Refactor codebase for modularity and cleanup + The cycle detection defect fix](https://github.com/mrajkishor/Distributed-Task-Scheduler/issues/81)  
-- [ ] [2.9 Persist task metadata to PostgreSQL for tracking]
+- [ ] [2.9 Persist task metadata to PostgreSQL for tracking](https://github.com/mrajkishor/Distributed-Task-Scheduler/issues/102)
 
 ---
 
@@ -35,7 +35,7 @@
 - [x] [3.5 Add distributed locking for task leasing (Redis SETNX or Redisson)](https://github.com/mrajkishor/Distributed-Task-Scheduler/issues/91)  
 - [x] [3.6 Implement graceful shutdown, signal handling, and health checks](https://github.com/mrajkishor/Distributed-Task-Scheduler/issues/93)  
 - [x] [3.7 Run and validate full task lifecycle: submit ➝ lease ➝ execute ➝ status](https://github.com/mrajkishor/Distributed-Task-Scheduler/issues/95)  
-- [ ] [3.8 Publish task events to Kafka (for DLQ and analytics)]
+- [ ] [3.8 Publish task events to Kafka (for DLQ and analytics)](https://github.com/mrajkishor/Distributed-Task-Scheduler/issues/103)
 
 ---
 
