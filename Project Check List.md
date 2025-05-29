@@ -42,7 +42,7 @@
 ### 🔹 Step 4: Scaling, Notification, Throttling
 - [x] [4.1 Add job notification via email/webhook](https://github.com/mrajkishor/Distributed-Task-Scheduler/issues/97)  
 - [x] [4.2 Build a webhook receiver mock server](https://github.com/mrajkishor/Distributed-Task-Scheduler/issues/99)  
-- [ ] 4.3 Implement horizontal scaling of workers (multi-instance test)  
+- [ ] [4.3 Implement horizontal scaling of workers (multi-instance test)](https://github.com/mrajkishor/Distributed-Task-Scheduler/issues/101)  
 - [ ] 4.4 Add rate limiting/throttling via Redis token bucket  
 - [ ] 4.5 Add support to pause/resume workers dynamically  
 - [ ] 4.6 Implement config loading via SSM / YAML profiles  
