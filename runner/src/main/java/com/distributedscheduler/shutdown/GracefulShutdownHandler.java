@@ -51,3 +51,69 @@ public class GracefulShutdownHandler {
         }
     }
 }
+
+
+/***
+ * About this component
+ *
+ * The `GracefulShutdownHandler` component ensures **clean shutdown of your scheduler application**. It listens for application shutdown (`ContextClosedEvent`) and performs key cleanup actions to prevent data corruption or resource leaks.
+ *
+ * ---
+ *
+ * ### 🔧 Responsibilities
+ *
+ * #### 1. **Stop Task Executor**
+ *
+ * ```java
+ * taskExecutor.shutdown();
+ * ```
+ *
+ * * Halts submission of new tasks.
+ * * Waits for running tasks to complete.
+ * * Prevents abrupt termination of in-flight executions.
+ *
+ * ---
+ *
+ * #### 2. **Release Redis Locks**
+ *
+ * ```java
+ * Set<String> lockedKeys = redisTemplate.keys("lock:*");
+ * ```
+ *
+ * * Finds all Redis lock keys (`lock:taskId`).
+ * * Deletes them to **avoid deadlocks** or blocking future executions.
+ * * Ensures other instances can pick up tasks after restart.
+ *
+ * ---
+ *
+ * #### 3. **Optional DLQ/Retry Handling**
+ *
+ * ```java
+ * // e.g., redisTemplate.opsForList().leftPush("dlq", taskId);
+ * ```
+ *
+ * * You can optionally push in-progress task IDs to DLQ or retry queues.
+ * * Helps ensure no tasks are lost if the system shuts down midway.
+ *
+ * ---
+ *
+ * ### ✅ Use Case
+ *
+ * This component is **critical in distributed systems** to:
+ *
+ * * Maintain **task consistency**.
+ * * Prevent **zombie locks**.
+ * * Avoid **partial execution loss**.
+ *
+ * ---
+ *
+ * ### 🧠 Summary
+ *
+ * `GracefulShutdownHandler`:
+ *
+ * * Gracefully shuts down executor threads.
+ * * Frees Redis locks.
+ * * Prepares the system for a **safe restart**.
+ *
+ *
+ * **/

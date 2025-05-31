@@ -35,3 +35,32 @@ public class RedisDelayQueueService {
         redisTemplate.opsForZSet().remove(getTenantKey(tenantId), taskId);
     }
 }
+
+/**
+ * About this Component:
+ *
+ * The `RedisDelayQueueService` manages a **delayed task queue** using Redis **ZSET** (sorted set), where tasks are scheduled based on a future timestamp (UNIX epoch seconds).
+ *
+ * ### 🔍 Key Methods:
+ *
+ * 1. **`addTaskToDelayQueue(taskId, tenantId, delaySeconds)`**
+ *
+ *    * Adds a task to a Redis ZSET with a **future score = now + delaySeconds**.
+ *    * This score acts as the execution timestamp.
+ *
+ * 2. **`fetchDueTasks(tenantId)`**
+ *
+ *    * Fetches tasks whose score (scheduled time) is **less than or equal to current time**.
+ *    * These tasks are **ready for execution**.
+ *
+ * 3. **`removeTask(taskId, tenantId)`**
+ *
+ *    * Removes a task from the Redis ZSET once it's executed or canceled.
+ *
+ * ### 📦 Use Case:
+ *
+ * This service is used to **schedule retries, delays, or initial task executions** based on `delaySeconds`.
+ * It powers task leasing/polling in the background scheduler logic.
+ *
+ *
+ * */

@@ -60,3 +60,70 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
     }
 }
+
+
+/**
+ *
+ * The `JWTAuthenticationFilter` is a **custom Spring Security filter** that processes **JWT tokens** on every HTTP request to authenticate users.
+ *
+ * ---
+ *
+ * ### ✅ **Purpose:**
+ *
+ * It intercepts each request, checks for a valid JWT token in the `Authorization` header, and sets up Spring Security's authentication context.
+ *
+ * ---
+ *
+ * ### 🔄 **How It Works (Step-by-Step):**
+ *
+ * 1. **Extract Token:**
+ *
+ *    * Reads `Authorization` header.
+ *    * If header starts with `Bearer `, it extracts the token part.
+ *
+ * 2. **Extract Username from Token:**
+ *
+ *    * Uses `jwtUtil.extractUsername(token)`.
+ *
+ * 3. **Authenticate User (if not already authenticated):**
+ *
+ *    * Loads `UserDetails` from `CustomUserDetailsService`.
+ *    * Extracts the role from token claims.
+ *    * Validates token using `jwtUtil.validateToken()`.
+ *
+ * 4. **Set Authentication:**
+ *
+ *    * Creates a `UsernamePasswordAuthenticationToken`.
+ *    * Sets it in the `SecurityContextHolder`.
+ *
+ * 5. **Continue the Filter Chain:**
+ *
+ *    * Passes the request to the next filter/controller.
+ *
+ * ---
+ *
+ * ### 🧠 **Why Important:**
+ *
+ * * Ensures **secure, stateless** user authentication using JWT.
+ * * Without this, Spring Security wouldn’t recognize the user from the JWT token in API requests.
+ *
+ * ---
+ *
+ * ### 🔐 Example:
+ *
+ * If a request has this header:
+ *
+ * ```
+ * Authorization: Bearer <your-jwt-token>
+ * ```
+ *
+ * The filter:
+ *
+ * * Validates the token,
+ * * Extracts user details and role,
+ * * Authenticates the user for that request.
+ *
+ *
+ *
+ *
+ * **/

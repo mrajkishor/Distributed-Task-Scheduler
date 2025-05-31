@@ -1,0 +1,22 @@
+{
+  "name": "express-cron-client",
+  "version": "1.0.0",
+  "description": "An enterprise-grade Express cron client to trigger Spring Boot DAG task creation",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Your Name",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^1.9.0",
+    "express": "^5.1.0",
+    "node-cron": "^4.0.7",
+    "uuid": "^11.1.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  }
+}

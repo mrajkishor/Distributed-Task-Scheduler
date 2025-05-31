@@ -14,30 +14,29 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 
 @Configuration
 @EnableWebSecurity
-@EnableMethodSecurity  // Enables @PreAuthorize annotations
+@EnableMethodSecurity // Enables @PreAuthorize annotations
 public class SecurityConfig {
-
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(csrf -> csrf.disable()) // Updated for Spring Security 6+
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/auth/**").permitAll()   // Public login/register
+                        .requestMatchers("/auth/**").permitAll() // Public login/register
                         .requestMatchers("/admin/**").hasRole("ADMIN") // Admin-only
-                        .requestMatchers("/tasks/**").permitAll()   // TEMPORARY for testing
-                        .requestMatchers("/actuator/**").authenticated() // 👈 actuator now requires login
-                        .anyRequest().authenticated()              // All others need auth
+                        .requestMatchers("/tasks/**").permitAll() // TEMPORARY for testing
+                        .requestMatchers("/actuator/**").permitAll()
+                        .anyRequest().authenticated() // All others need auth
                 )
-                .httpBasic(customizer -> {})// 👈 enables basic auth for actuator
+                .httpBasic(customizer -> {
+                })
+                .csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> session
-                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                )
+                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(jwtFilter(), UsernamePasswordAuthenticationFilter.class); // Add JWT filter
 
         return http.build();
     }
-
 
     @Bean
     public JWTAuthenticationFilter jwtFilter() {

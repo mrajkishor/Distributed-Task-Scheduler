@@ -66,3 +66,32 @@ public class NotificationService {
         sendEmail(task); // safe even if not implemented
     }
 }
+
+
+/**
+ * About this component
+ *
+ *
+ * This `NotificationService` is responsible for **sending task notifications** (via webhook or email) once a task reaches a terminal state (e.g., `COMPLETED`, `FAILED`, etc.).
+ *
+ * ### 🔍 Key Methods:
+ *
+ * * `sendWebhook(Task task)`:
+ *
+ *   * Sends a **POST request** to the `notificationUrl` provided in the task.
+ *   * Sends a payload including task ID, status, tenant, retry count, and timestamp.
+ *   * Errors are logged but don't stop the task flow (non-blocking).
+ *
+ * * `sendEmail(Task task)`:
+ *
+ *   * Placeholder method for future **email integration** (e.g., SMTP or SendGrid).
+ *   * Only logs a message for now.
+ *
+ * * `notify(Task task)`:
+ *
+ *   * Unified method to **trigger all available notifications** for the task.
+ *
+ * This ensures decoupled, fault-tolerant notifications for external systems.
+ *
+ *
+ * ***/

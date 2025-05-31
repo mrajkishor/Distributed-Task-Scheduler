@@ -53,3 +53,35 @@ public class Schedule {
         isRecurring = recurring;
     }
 }
+
+
+/***
+ * About this component
+ *
+ *
+ *
+ * This `Schedule` class allows **cron-based** and **recurring job** configuration.
+ *
+ * ### ✅ Explanation:
+ *
+ * * **`cronExpression`**: A string like `"0 0 * * *"` that defines when the job runs (e.g., every day at midnight).
+ * * **`isRecurring`**:
+ *
+ *   * `true`: the job will run again as per the cron schedule.
+ *   * `false`: the job runs once at the scheduled time.
+ *
+ * ### 🛠️ Example:
+ *
+ * ```json
+ * "schedule": {
+ *   "cronExpression": "0 0 * * *",
+ *   "recurring": true
+ * }
+ * ```
+ *
+ * ➡ Runs **every day at 00:00**, repeatedly.
+ *
+ * Let me know if you want to support **interval-based scheduling** (e.g., every 5 minutes).
+ *
+ *
+ * **/

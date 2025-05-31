@@ -55,3 +55,63 @@ public class JWTUtil {
                 .getBody();
     }
 }
+
+
+
+/**
+ * use of this component
+ *
+ *
+ * The `JWTUtil` component is a **JWT utility class** used for:
+ *
+ * ---
+ *
+ * ### ✅ **Main Purpose:**
+ *
+ * Handling **creation**, **validation**, and **parsing** of JWT (JSON Web Token) in your application.
+ *
+ * ---
+ *
+ * ### 🔧 **Functions Provided:**
+ *
+ * 1. **`generateToken(username, role, tenantId)`**
+ *
+ *    * Creates a signed JWT with:
+ *
+ *      * `username` as subject
+ *      * `role` and `tenantId` as claims
+ *      * 1-hour expiration
+ *    * Used during login to issue tokens.
+ *
+ * 2. **`extractUsername(token)` / `extractRole(token)` / `extractTenantId(token)`**
+ *
+ *    * Reads values from token claims.
+ *
+ * 3. **`validateToken(token, userDetails)`**
+ *
+ *    * Checks if the token is valid:
+ *
+ *      * Matches the username
+ *      * Is not expired
+ *
+ * 4. **`extractAllClaims(token)`** *(internal)*
+ *
+ *    * Decodes the JWT and returns all its claims.
+ *
+ * ---
+ *
+ * ### 🔐 **Why It Matters:**
+ *
+ * Used by your `JWTAuthenticationFilter` to:
+ *
+ * * Authenticate requests
+ * * Extract roles and tenant info
+ * * Enable **stateless security** (no session needed)
+ *
+ * ---
+ *
+ * ### 🧠 Summary:
+ *
+ * This component is the **core of your JWT security**. Without it, you cannot create or verify tokens securely.
+ *
+ * **/

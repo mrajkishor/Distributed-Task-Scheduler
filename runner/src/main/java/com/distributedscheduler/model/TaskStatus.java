@@ -42,3 +42,30 @@ public enum TaskStatus {
      */
     DLQ
 }
+
+
+
+/*
+* About this component
+*
+*
+* This `TaskStatus` enum defines **all possible lifecycle stages** for a task in your distributed scheduler:
+
+### ✅ Meaning of Each Status:
+
+| Status      | Description                                                                 |
+| ----------- | --------------------------------------------------------------------------- |
+| `PENDING`   | Task is created but not yet started                                         |
+| `RUNNING`   | Task is currently executing                                                 |
+| `COMPLETED` | Task finished successfully                                                  |
+| `FAILED`    | Task execution failed                                                       |
+| `SKIPPED`   | Task was not run (e.g., due to dependency failure or user action)           |
+| `RETRYING`  | Task is being retried due to a previous failure                             |
+| `DLQ`       | Task failed too many times and is now pushed to the Dead Letter Queue (DLQ) |
+
+This enum helps track task progress and allows the scheduler to decide what to do next based on its current state.
+
+*
+*
+*
+* */

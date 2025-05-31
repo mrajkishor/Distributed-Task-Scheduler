@@ -90,3 +90,109 @@ public class DelayQueuePoller {
         }
     }
 }
+
+
+
+/**
+ * About this component
+ *
+ *
+ * Here’s a complete example showing how the `DelayQueuePoller` works step by step in a real-world scenario:
+ *
+ * ---
+ *
+ * ### 🛒 **Use Case: Send Order Confirmation Email After Delay**
+ *
+ * ---
+ *
+ * ### 🔸 Step 1: Task Submitted
+ *
+ * ```json
+ * POST /tasks
+ * {
+ *   "id": "task123",
+ *   "tenantId": "default",
+ *   "payload": { "email": "user@example.com", "message": "Your order is confirmed!" },
+ *   "delaySeconds": 10,
+ *   "maxRetries": 3
+ * }
+ * ```
+ *
+ * ➡️ This task is added to Redis ZSET with score = `now + 10`.
+ *
+ * ---
+ *
+ * ### 🔸 Step 2: `DelayQueuePoller` Runs Every Second
+ *
+ * It checks for all tenants:
+ *
+ * ```java
+ * Set<String> readyTaskIds = delayQueueService.fetchDueTasks("default");
+ * ```
+ *
+ * At 10 seconds later, it finds:
+ *
+ * ```
+ * task123 is ready to run
+ * ```
+ *
+ * ---
+ *
+ * ### 🔸 Step 3: Task Locked
+ *
+ * ```java
+ * if (!lockService.acquireLock("task123", 30000)) return;
+ * ```
+ *
+ * If lock is acquired, it proceeds.
+ *
+ * ---
+ *
+ * ### 🔸 Step 4: Task Loaded
+ *
+ * ```java
+ * Task task = taskRepo.findById("default", "task123");
+ * ```
+ *
+ * ---
+ *
+ * ### 🔸 Step 5: Task Executed via RetryHandler
+ *
+ * ```java
+ * retryHandler.handle(task); // Internally calls taskExecutor.processTask(task)
+ * ```
+ *
+ * If successful:
+ *
+ * * `status = COMPLETED`
+ * * Notifications are sent (webhook/email)
+ *
+ * If failed:
+ *
+ * * `status = RETRYING`
+ * * Re-added to ZSET with exponential delay (e.g., 2s, 4s, 8s…)
+ *
+ * ---
+ *
+ * ### 🔸 Step 6: After 3 Failures → Moved to DLQ
+ *
+ * If `retryCount >= maxRetries`, task is:
+ *
+ * * `status = DLQ`
+ * * Pushed to Dead Letter Queue for inspection
+ *
+ * ---
+ *
+ * ### ✅ Summary
+ *
+ * The poller:
+ *
+ * * Detects ready tasks
+ * * Locks and executes them
+ * * Retries failed ones
+ * * Moves unfixable ones to DLQ
+ *
+ * All while ensuring **distributed safety and resilience**.
+ *
+ *
+ * **/

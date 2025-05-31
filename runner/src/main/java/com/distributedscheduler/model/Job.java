@@ -143,3 +143,51 @@ public class Job {
         this.metadata = metadata;
     }
 }
+
+
+/**
+ * About this component:
+ *
+ *
+ * This `Job` class is the **top-level model** for managing a **scheduled job** that contains **multiple dependent tasks** in a Directed Acyclic Graph (DAG) structure.
+ *
+ * ---
+ *
+ * ### ✅ Key Responsibilities:
+ *
+ * | Field         | Purpose                                                       |
+ * | ------------- | ------------------------------------------------------------- |
+ * | `id`          | Unique job ID                                                 |
+ * | `name`        | Human-readable job name                                       |
+ * | `tasks`       | List of `Task` objects forming the DAG                        |
+ * | `retryPolicy` | Global retry policy if job fails (e.g. exponential backoff)   |
+ * | `schedule`    | When the job should run (e.g. cron, interval-based)           |
+ * | `status`      | Current job status: PENDING, RUNNING, COMPLETED, FAILED, etc. |
+ * | `metadata`    | Extra job-related info like labels, tags, userId, etc.        |
+ *
+ * ---
+ *
+ * ### 🔁 Use Case in Your Scheduler:
+ *
+ * * `Job` wraps all related `Task` objects.
+ * * Orchestrates execution order via dependencies (`Task.dependencies`).
+ * * Retry policy and scheduling logic can be customized per job.
+ *
+ * ---
+ *
+ * ### 🛠️ Typical Flow:
+ *
+ * 1. You create a `Job` with tasks like `CheckInventory`, `ConfirmPayment`, etc.
+ * 2. Each task can have dependency links.
+ * 3. The job can run:
+ *
+ *    * Immediately
+ *    * Or based on a cron schedule (`Schedule`)
+ * 4. Job execution is tracked with a `JobStatus`.
+ *
+ * ---
+ *
+ * Let me know if you want help implementing `RetryPolicy` and `Schedule` classes.
+ *
+ *
+ * **/

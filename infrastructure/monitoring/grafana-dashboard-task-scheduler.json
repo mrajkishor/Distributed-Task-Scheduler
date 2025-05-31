@@ -1,0 +1,87 @@
+{
+  "dashboard": {
+    "id": null,
+    "uid": null,
+    "title": "Distributed Task Scheduler Dashboard",
+    "timezone": "browser",
+    "schemaVersion": 36,
+    "version": 1,
+    "refresh": "10s",
+    "panels": [
+      {
+        "type": "graph",
+        "title": "Total vs Completed vs Failed Tasks",
+        "id": 1,
+        "targets": [
+          {
+            "expr": "task_total_count",
+            "legendFormat": "Total Tasks"
+          },
+          {
+            "expr": "task_completed_count",
+            "legendFormat": "Completed Tasks"
+          },
+          {
+            "expr": "task_failed_count",
+            "legendFormat": "Failed Tasks"
+          }
+        ],
+        "datasource": "Prometheus"
+      },
+      {
+        "type": "graph",
+        "title": "Retry Count",
+        "id": 2,
+        "targets": [
+          {
+            "expr": "task_retried_count",
+            "legendFormat": "Retry Attempts"
+          }
+        ],
+        "datasource": "Prometheus"
+      },
+      {
+        "type": "gauge",
+        "title": "Current Queue Size",
+        "id": 3,
+        "targets": [
+          {
+            "expr": "task_queue_size",
+            "legendFormat": "Queue Size"
+          }
+        ],
+        "datasource": "Prometheus"
+      },
+      {
+        "type": "graph",
+        "title": "Execution Time (s)",
+        "id": 4,
+        "targets": [
+          {
+            "expr": "task_execution_duration_seconds",
+            "legendFormat": "Execution Time"
+          }
+        ],
+        "datasource": "Prometheus"
+      },
+      {
+        "type": "stat",
+        "title": "DLQ Count",
+        "id": 5,
+        "targets": [
+          {
+            "expr": "task_dlq_count",
+            "legendFormat": "DLQ"
+          }
+        ],
+        "datasource": "Prometheus"
+      }
+    ],
+    "templating": {
+      "list": []
+    },
+    "annotations": {
+      "list": []
+    }
+  }
+}

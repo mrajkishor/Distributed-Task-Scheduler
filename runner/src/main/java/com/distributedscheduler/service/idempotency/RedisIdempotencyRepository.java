@@ -46,3 +46,60 @@ public class RedisIdempotencyRepository implements IdempotencyService {
         redisTemplate.opsForValue().set(key, taskId, ttl);
     }
 }
+
+
+/**
+ *
+ * about this component
+ *
+ *
+ * This component, `RedisIdempotencyRepository`, is a Redis-backed implementation of the `IdempotencyService` interface. It ensures **idempotent task creation**, meaning repeated task creation requests (with same data) won’t create duplicate tasks.
+ *
+ * ---
+ *
+ * ### ✅ **Key Responsibilities:**
+ *
+ * #### 1. `buildKey(...)`
+ *
+ * Creates a unique Redis key for each task request:
+ *
+ * * Uses `idempotencyKey` (if client provides it).
+ * * Else, hashes `request.name + request.payload` (via MD5).
+ * * Prepends with `idempotency:<tenantId>:...`.
+ *
+ * **➡️ Purpose**: Generate consistent Redis keys across retries.
+ *
+ * ---
+ *
+ * #### 2. `getTaskIdForKey(...)`
+ *
+ * Checks Redis to see if the task for this key was **already created**.
+ *
+ * * If found, returns the previously generated `taskId`.
+ *
+ * ---
+ *
+ * #### 3. `storeKeyToTaskIdMapping(...)`
+ *
+ * Stores a mapping from the generated key to the created `taskId` in Redis with a TTL (10 minutes).
+ *
+ * ---
+ *
+ * ### 🔁 **Example Use-Case**
+ *
+ * 1. User sends a task creation request.
+ * 2. This class builds the Redis key from payload or `idempotencyKey`.
+ * 3. It checks if task already exists using `getTaskIdForKey`.
+ * 4. If not, creates task, stores the mapping using `storeKeyToTaskIdMapping`.
+ *
+ * ---
+ *
+ * ### 💡 Why It Matters:
+ *
+ * * **Prevents duplicate tasks**
+ * * Enables **safe retries**
+ * * Works even if the client doesn’t send an idempotency key (fallback to MD5)
+ *
+ * Let me know if you want a flow diagram or sample request/response.
+ *
+ * **/

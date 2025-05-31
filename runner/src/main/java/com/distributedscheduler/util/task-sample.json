@@ -1,7 +1,6 @@
 {
   "id": "email-task-123",
   "name": "Send Welcome Email",
-  "dependencies": ["fetch-user-data"],
   "status": "PENDING",
   "retryCount": 0,
   "maxRetries": 3,

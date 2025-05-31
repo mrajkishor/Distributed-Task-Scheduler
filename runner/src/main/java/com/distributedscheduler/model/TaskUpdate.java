@@ -46,3 +46,20 @@ public class TaskUpdate {
         this.metadata = metadata;
     }
 }
+
+
+
+/**
+ *
+ * The `TaskUpdate` class represents the **updatable fields of a Task** when calling the API endpoint `PUT /jobs/{id}/tasks/{taskId}`.
+ *
+ * ### 🔍 Fields Explained:
+ *
+ * * `name`: Updates the name (label) of the task.
+ * * `dependencies`: Updates the list of other task IDs this task depends on (for DAG).
+ * * `metadata`: Allows attaching extra key-value info like tags, labels, annotations, etc.
+ *
+ * This is useful for partial updates to an existing task without recreating it.
+ *
+ *
+ * **/

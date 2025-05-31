@@ -53,3 +53,34 @@ public class RetryPolicy {
         this.delaySeconds = delaySeconds;
     }
 }
+
+/***
+ * About this component
+ *
+ * This `RetryPolicy` class supports only **fixed delay retries**, not
+ * exponential or other backoff strategies.
+ *
+ * ### 🔁 Meaning of Fields:
+ *
+ * * **`maxRetries`**: Maximum retry attempts if the task fails (e.g., `3` means
+ * it can retry 3 times).
+ * * **`delaySeconds`**: Fixed number of seconds to wait between each retry
+ * (e.g., `10` means retry every 10 seconds).
+ *
+ * ### ❗Limitation:
+ *
+ * There is **no field for `backoff strategy`** like `EXPONENTIAL` in this
+ * class.
+ * If you want to support multiple strategies (like `EXPONENTIAL`, `LINEAR`,
+ * `NONE`), you should:
+ *
+ * * Add a new field: `private BackoffStrategy backoffStrategy;`
+ * * Create an enum `BackoffStrategy { FIXED, EXPONENTIAL, LINEAR }`
+ *
+ * Future Scope:
+ * updating this class to support backoff strategies.
+ *
+ *
+ *
+ *
+ ***/

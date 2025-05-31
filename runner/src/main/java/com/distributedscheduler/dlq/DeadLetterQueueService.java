@@ -10,6 +10,22 @@ import org.springframework.stereotype.Service;
 @Service
 public class DeadLetterQueueService {
 
+
+    // This service handles moving irrecoverable tasks
+    // (i.e., those that have failed after all retries) to a Dead Letter Queue (DLQ) in Redis for
+    // further inspection or manual reprocessing.
+
+    //    Why Use DLQ?
+    //    - Ensures failed tasks are not lost.
+    //    - Enables manual recovery, debugging, or alerting.
+    //    - Common in resilient distributed systems for fault isolation.
+
+
+    //    Future Extensions:
+    //    - Add endpoint to view/retry DLQ tasks.
+    //    - Auto-alert (email/Slack) when DLQ crosses threshold.
+    //    - Time-based DLQ TTL cleanup.
+
     private static final Logger logger = LoggerFactory.getLogger(DeadLetterQueueService.class);
     private final RedisTemplate<String, Object> redisTemplate;
     private final ObjectMapper objectMapper;

@@ -153,3 +153,41 @@ public class TaskRedisRepository {
 
 
 }
+
+
+/**
+ * About this component:
+ *
+ *The `TaskRedisRepository` is a **feature-rich Redis-based DAO** for storing, retrieving, indexing, and managing dependencies of `Task` objects.
+ *
+ * ### 🔍 Key Responsibilities:
+ *
+ * 1. **Task Storage (JSON in Redis)**
+ *
+ *    * `save(Task)` → Stores task as JSON at key `task:<tenantId>:<taskId>`.
+ *    * `findById(...)` → Fetches and deserializes task JSON.
+ *    * `delete(...)` → Deletes task key.
+ *
+ * 2. **Name Indexing**
+ *
+ *    * `saveTaskAndIndex(...)` → Saves task and maps `task:name:<tenantId>:<name>` → `taskId`.
+ *    * `getTaskIdByName(...)` → Gets task ID by name.
+ *
+ * 3. **Dependency Management**
+ *
+ *    * `saveDependencies(...)` → Stores dependency set as Redis Set under `task:deps:<tenantId>:<taskId>`.
+ *    * `getDependencies(...)` → Reads dependency set.
+ *    * `getAllDependenciesMap(...)` → Returns map of all dependencies for the tenant.
+ *
+ * 4. **Query Support**
+ *
+ *    * `findAllByTenantId(...)` → Scans keys `task:<tenantId>:*` to retrieve all tasks.
+ *    * `updateTaskStatus(...)` → Fetches, updates status, and re-saves.
+ *
+ * ### ✅ Summary:
+ *
+ * This class manages both task data and metadata (like dependencies and name-indexing) using Redis in a distributed task scheduler system.
+ *
+ *
+ *
+ * **/
