@@ -209,6 +209,10 @@ Client → REST API (Spring Boot)
      Update Task Status in Redis
 ```
 
+![flow_diagra_dag](https://github.com/user-attachments/assets/b9cd0d38-1927-4bf9-8901-e3e29e485a6f)
+
+
+
 ---
 
 ## 📦 Project Modules
