@@ -215,6 +215,24 @@ Client → REST API (Spring Boot)
 
 ---
 
+### 🎨 UI
+
+Dashboard
+> <img width="1128" height="850" alt="image" src="https://github.com/user-attachments/assets/ec8aa242-1c24-4e17-9c74-eaa38dbb59f8" />
+
+Tasks 
+> <img width="1137" height="849" alt="image" src="https://github.com/user-attachments/assets/65c2c368-9692-4aaa-8274-2dd431e05f38" />
+
+DAG Visualizer 
+> <img width="1132" height="851" alt="image" src="https://github.com/user-attachments/assets/be04f93e-000d-405f-8aa9-723e38cb46cb" />
+
+DLQ
+> <img width="1139" height="848" alt="image" src="https://github.com/user-attachments/assets/2a3ee680-e4b8-456f-981d-7951ef0c1018" />
+
+Other screens | Work in progress
+
+---
+
 ## 📦 Project Modules
 
 - `api-service`: REST endpoints to submit tasks
@@ -291,13 +309,6 @@ This project showcases expertise in:
 **Raj Kishor Maharana** – Full stack developer | Exploring Distributed Systems  
 
 [LinkedIn](https://www.linkedin.com/in/mrajkishor331/) • [Email](mailto:mrajkishor331@gmail.com)
-
----
-## 👨‍🏫 Project Guide
-
-**BALAKRUSHNA BEHERA** - Java Backend Developer | MCA | 3+ years of industry experience
-
-[LinkedIn](https://www.linkedin.com/in/balakrushna-behera-5687001a2/)
 
 ---
 
